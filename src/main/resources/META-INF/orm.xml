@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+        http://java.sun.com/xml/ns/persistence/orm_2_0.xsd ">
+
+    <!--native SQL query-->
+    <named-native-query name="KycParameter.getKey"
+                        result-class="com.kyc.users.entity.KycParameter">
+        <query>SELECT PARAM_KEY,PARAM_VALUE FROM KYC_PARAMETERS WHERE PARAM_KEY = 1?</query>
+    </named-native-query>
+
+    <named-native-query name="KycLoginHistoric.getCurrentSession"
+                        result-class="com.kyc.users.entity.KycLoginHistoric">
+        <query>
+            SELECT ID,ID_USER,IP,ID_CHANNEL,ID_SESSION,ACTIVE_SESSION,DATE_LOGIN,DATE_LOGOUT
+            FROM KYC_LOGIN_HISTORIC WHERE ID_SESSION = ?1
+            AND ACTIVE_SESSION = true
+        </query>
+    </named-native-query>
+
+    <named-native-query name="KycLoginHistoric.getCurrentSessionOnChannel"
+                        result-class="com.kyc.users.entity.KycLoginHistoric">
+        <query>
+            SELECT ID,ID_USER,IP,ID_CHANNEL,ID_SESSION,ACTIVE_SESSION,DATE_LOGIN,DATE_LOGOUT
+            FROM KYC_LOGIN_HISTORIC WHERE ID_USER = ?1
+            AND ID_CHANNEL = ?2
+            AND ACTIVE_SESSION = true
+        </query>
+    </named-native-query>
+
+</entity-mappings>

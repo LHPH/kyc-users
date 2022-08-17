@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: kyc-customers-users
+  profiles:
+    active: dev
+  jackson:
+    default-property-inclusion: NON_NULL
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health
+  endpoint:
+    health:
+      show-details: always
+  health:
+    diskspace:
+      enabled: false
+    external-services:
+      enabled: true
+  info:
+    build:
+      enabled: false
+
+kyc-messages:
+  catalog:
+    messages:
+      "001":
+        code: KYC-CUSTOMER-USERS-001
+        message: Unexpected Error
+        type: ERROR
+      "002":
+        code: KYC-CUSTOMER-USERS-001
+        message: The request is invalid
+        type: ERROR
+      "003":
+        code: KYC-CUSTOMER-USERS-003
+        message: The username already exists.
+        type: WARN
+      "004":
+        code: KYC-CUSTOMER-USERS-004
+        message: The password entered does not meet the conditions. No same as the username, one upper case letter, one digit and one special character.
+        type: ERROR
+      "005":
+        code: KYC-CUSTOMER-USERS-005
+        message: It is not possible to create the username
+        type: WARN
+
+logging:
+  level:
+    root: INFO
+    com.kyc: INFO
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+
