@@ -31,13 +31,13 @@ kyc-messages:
         message: Unexpected Error
         type: ERROR
       "002":
-        code: KYC-CUSTOMER-USERS-001
+        code: KYC-CUSTOMER-USERS-002
         message: The request is invalid
         type: ERROR
       "003":
         code: KYC-CUSTOMER-USERS-003
-        message: The username already exists.
-        type: WARN
+        message: The provided credentials are invalid
+        type: ERROR
       "004":
         code: KYC-CUSTOMER-USERS-004
         message: The password entered does not meet the conditions. No same as the username, one upper case letter, one digit and one special character.
@@ -46,6 +46,30 @@ kyc-messages:
         code: KYC-CUSTOMER-USERS-005
         message: It is not possible to create the username
         type: WARN
+      "006":
+        code: KYC-CUSTOMER-USERS-006
+        message: The username or password is incorrect
+        type: ERROR
+      "007":
+        code: KYC-CUSTOMER-USERS-007
+        message: The user is not valid
+        type: ERROR
+      "008":
+        code: KYC-CUSTOMER-USERS-008
+        message: The user is inactive or is locked
+        type: ERROR
+      "009":
+        code: KYC-CUSTOMER-USERS-009
+        message: There is already an active session for this channel
+        type: WARN
+      "010":
+        code: KYC-CUSTOMER-USERS-010
+        message: The operation cannot be perfomed at the moment
+        type: ERROR
+      "011":
+        code: KYC-CUSTOMER-USER-011
+        message: The session already has expired
+        type: ERROR
 
 logging:
   level:

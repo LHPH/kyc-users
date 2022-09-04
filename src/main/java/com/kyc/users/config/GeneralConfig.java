@@ -1,7 +1,9 @@
 package com.kyc.users.config;
 
 import com.kyc.core.config.BuildDetailConfig;
+import com.kyc.core.config.ClockConfig;
 import com.kyc.core.exception.handlers.KycGenericRestExceptionHandler;
+import com.kyc.core.exception.handlers.KycRestAuthValidationExceptionHandler;
 import com.kyc.core.exception.handlers.KycUnhandledExceptionHandler;
 import com.kyc.core.exception.handlers.KycValidationRestExceptionHandler;
 import com.kyc.core.properties.KycMessages;
@@ -11,14 +13,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import java.time.Clock;
-import java.time.ZoneId;
-
 import static com.kyc.users.constants.AppConstants.MSG_APP_001;
 import static com.kyc.users.constants.AppConstants.MSG_APP_002;
+import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 
 @Configuration
-@Import(value = {KycMessages.class, KycGenericRestExceptionHandler.class, BuildDetailConfig.class})
+@Import(value = {KycMessages.class, KycGenericRestExceptionHandler.class, BuildDetailConfig.class,
+        ClockConfig.class})
 public class GeneralConfig {
 
     @Bean
@@ -34,6 +35,12 @@ public class GeneralConfig {
     }
 
     @Bean
+    public KycRestAuthValidationExceptionHandler kycRestAuthValidationExceptionHandler(KycMessages kycMessages){
+
+        return new KycRestAuthValidationExceptionHandler(kycMessages.getMessage(MSG_APP_003));
+    }
+
+    @Bean
     public PasswordFormatValidationService passwordFormatValidationService(){
         return new PasswordFormatValidationService();
     }
@@ -41,11 +48,6 @@ public class GeneralConfig {
     @Bean
     public PasswordEncoderService passwordEncoderService(){
         return new PasswordEncoderService();
-    }
-
-    @Bean
-    public Clock clock(){
-        return Clock.system(ZoneId.of("UTC-6"));
     }
 
 }

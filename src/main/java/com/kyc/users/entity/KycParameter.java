@@ -15,8 +15,6 @@ import javax.persistence.Table;
 public class KycParameter {
 
     @Id
-    private Long id;
-
     @Column(name = "PARAM_KEY")
     private String key;
 

@@ -28,6 +28,7 @@ import java.util.Optional;
 import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 import static com.kyc.users.constants.AppConstants.MSG_APP_004;
 import static com.kyc.users.constants.AppConstants.MSG_APP_005;
+import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 
 @Service
 public class SignUpUserService {
@@ -75,7 +76,7 @@ public class SignUpUserService {
         }
         throw KycRestException.builderRestException()
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .errorData(kycMessages.getMessage(MSG_APP_003))
+                .errorData(kycMessages.getMessage(MSG_APP_005))
                 .inputData(req)
                 .build();
     }
@@ -124,7 +125,7 @@ public class SignUpUserService {
             else{
                 throw KycRestException.builderRestException()
                         .status(HttpStatus.SERVICE_UNAVAILABLE)
-                        .errorData(kycMessages.getMessage(MSG_APP_003))
+                        .errorData(kycMessages.getMessage(MSG_APP_010))
                         .inputData(req)
                         .build();
             }
@@ -133,7 +134,7 @@ public class SignUpUserService {
 
             throw KycRestException.builderRestException()
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_003))
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
                     .exception(ex)
                     .inputData(req)
                     .build();

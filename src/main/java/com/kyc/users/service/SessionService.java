@@ -5,11 +5,15 @@ import com.kyc.core.properties.KycMessages;
 import com.kyc.core.util.DateUtil;
 import com.kyc.users.entity.KycLoginHistoric;
 import com.kyc.users.entity.KycLoginUserInfo;
+import com.kyc.users.entity.KycParameter;
 import com.kyc.users.entity.KycUser;
 import com.kyc.users.model.SessionData;
 import com.kyc.users.repositories.KycUserRepository;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -19,15 +23,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.kyc.users.constants.AppConstants.MSG_APP_003;
+import static com.kyc.users.constants.AppConstants.KYC_SESSION_TIMEOUT;
+import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 
 @Service
 public class SessionService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionService.class);
+
     @Autowired
     private HistoricLoginService historicLoginService;
+
+    @Autowired
+    private ParameterService parameterService;
 
     @Autowired
     private KycUserRepository kycUserRepository;
@@ -65,7 +77,7 @@ public class SessionService {
 
             throw KycRestException.builderRestException()
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_003))
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
                     .exception(ex)
                     .build();
         }
@@ -83,7 +95,59 @@ public class SessionService {
 
             throw KycRestException.builderRestException()
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_003))
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
+                    .exception(ex)
+                    .build();
+        }
+    }
+
+    @Transactional
+    public void closeIdleActiveSessions(){
+
+        try{
+
+            LOGGER.info("Retrieving active sessions");
+            List<KycLoginHistoric> idleSessions = historicLoginService.getActiveSessions()
+                    .stream().filter( e -> !checkTimeCurrentSession(e))
+                    .collect(Collectors.toList());
+            LOGGER.info("There are {} idle sessions",idleSessions.size());
+            idleSessions.forEach(idle -> {
+
+                SessionData sessionData = SessionData.builder()
+                        .sessionId(idle.getIdSession())
+                        .newDate(new Date())
+                        .build();
+                historicLoginService.addHistoricLogoutData(sessionData);
+            });
+            LOGGER.info("Finish the auto close idle sessions");
+        }
+        catch(DataAccessException ex){
+
+            throw KycRestException.builderRestException()
+                    .status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
+                    .exception(ex)
+                    .build();
+        }
+    }
+
+    @Transactional
+    public boolean renewSession(SessionData sessionData){
+
+        try{
+
+            if(hasActiveSession(sessionData)){
+
+                historicLoginService.refreshCheckpoint(sessionData);
+                return true;
+            }
+            return false;
+        }
+        catch(DataAccessException ex){
+
+            throw KycRestException.builderRestException()
+                    .status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
                     .exception(ex)
                     .build();
         }
@@ -101,7 +165,7 @@ public class SessionService {
 
             throw KycRestException.builderRestException()
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_003))
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
                     .exception(ex)
                     .build();
         }
@@ -117,7 +181,7 @@ public class SessionService {
          catch(DataAccessException ex){
              throw KycRestException.builderRestException()
                      .status(HttpStatus.SERVICE_UNAVAILABLE)
-                     .errorData(kycMessages.getMessage(MSG_APP_003))
+                     .errorData(kycMessages.getMessage(MSG_APP_010))
                      .exception(ex)
                      .build();
          }
@@ -125,8 +189,11 @@ public class SessionService {
 
     private boolean checkTimeCurrentSession(KycLoginHistoric currentSession){
 
-        Date lastLoginDate = currentSession.getDateLogin();
-        LocalDateTime dateTime = DateUtil.dateToLocalDateTime(lastLoginDate).plusMinutes(15);
+        KycParameter kycParameter = parameterService.getParameter(KYC_SESSION_TIMEOUT);
+        int sessionTimeout = NumberUtils.toInt(kycParameter.getValue(),15);
+
+        Date dateCheckpoint = ObjectUtils.defaultIfNull(currentSession.getDateCheckpoint(),currentSession.getDateLogin());
+        LocalDateTime dateTime = DateUtil.dateToLocalDateTime(dateCheckpoint).plusMinutes(sessionTimeout);
 
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
         boolean cond1 = dateTime.isAfter(currentDateTime);

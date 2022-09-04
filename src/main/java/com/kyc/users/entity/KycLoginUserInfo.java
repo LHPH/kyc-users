@@ -1,6 +1,5 @@
 package com.kyc.users.entity;
 
-import com.kyc.core.exception.KycRestException;
 import lombok.Getter;
 import lombok.Setter;
 

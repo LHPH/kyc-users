@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.kyc.users.constants.AppConstants.MSG_APP_003;
+import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 
 @Service
 public class ParameterService {
@@ -30,7 +30,7 @@ public class ParameterService {
             return opKey.orElseThrow(()->
                     KycRestException.builderRestException()
                             .status(HttpStatus.SERVICE_UNAVAILABLE)
-                            .errorData(kycMessages.getMessage(MSG_APP_003))
+                            .errorData(kycMessages.getMessage(MSG_APP_010))
                             .inputData(key)
                             .build());
         }
@@ -38,7 +38,7 @@ public class ParameterService {
 
             throw KycRestException.builderRestException()
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_003))
+                    .errorData(kycMessages.getMessage(MSG_APP_010))
                     .exception(ex)
                     .inputData(key)
                     .build();

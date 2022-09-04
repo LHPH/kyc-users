@@ -3,12 +3,12 @@ package com.kyc.users.controllers;
 import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
+import com.kyc.core.util.TokenUtil;
 import com.kyc.users.delegate.UserDelegate;
 import com.kyc.users.model.CredentialData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,16 +40,39 @@ public class GeneralUserController {
                 .headers(headers)
                 .body(req)
                 .build();
-        return userDelegate.signUpCustomerUser(input);
+        return userDelegate.signInUser(input);
     }
 
-    @GetMapping("/session-checking")
-    public ResponseEntity<Void> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth){
+
+
+    @PostMapping("/session-checking")
+    public ResponseEntity<ResponseData<Void>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+                                                @RequestHeader(CHANNEL) String channel){
+
+        Map<String,Object> headers = new HashMap<>();
+        headers.put(CHANNEL,channel);
+        headers.put(HttpHeaders.AUTHORIZATION, TokenUtil.extractTokenFromAuthHeader(auth));
 
         RequestData<Void> req = RequestData.<Void>builder()
-                .headers(Collections.singletonMap(HttpHeaders.AUTHORIZATION,auth))
+                .headers(headers)
                 .build();
 
-        return null;
+        return userDelegate.sessionChecking(req);
     }
+
+    @PostMapping("/sign-out")
+    public ResponseEntity<ResponseData<Void>> logoutUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+                                                         @RequestHeader(CHANNEL) String channel){
+
+        Map<String,Object> headers = new HashMap<>();
+        headers.put(CHANNEL,channel);
+        headers.put(HttpHeaders.AUTHORIZATION, TokenUtil.extractTokenFromAuthHeader(auth));
+
+        RequestData<Void> req = RequestData.<Void>builder()
+                .headers(headers)
+                .build();
+
+        return userDelegate.signOutUser(req);
+    }
+
 }

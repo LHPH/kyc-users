@@ -4,7 +4,7 @@ import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.users.model.CredentialData;
-import com.kyc.users.service.SignInUserService;
+import com.kyc.users.service.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,15 +13,20 @@ import org.springframework.stereotype.Component;
 public class UserDelegate {
 
     @Autowired
-    private SignInUserService signInUserService;
+    private UserAuthService userAuthService;
 
-    public ResponseEntity<ResponseData<TokenData>> signUpCustomerUser(RequestData<CredentialData> req){
+    public ResponseEntity<ResponseData<TokenData>> signInUser(RequestData<CredentialData> req){
 
-        return signInUserService.signInUser(req).toResponseEntity();
+        return userAuthService.signInUser(req).toResponseEntity();
     }
 
-    public ResponseEntity<Void> sessionChecking(RequestData<Void> req){
+    public ResponseEntity<ResponseData<Void>> signOutUser(RequestData<Void> req){
 
-        return null;
+        return userAuthService.signOutUser(req).toResponseEntity();
+    }
+
+    public ResponseEntity<ResponseData<Void>> sessionChecking(RequestData<Void> req){
+
+        return userAuthService.renewSession(req).toResponseEntity();
     }
 }

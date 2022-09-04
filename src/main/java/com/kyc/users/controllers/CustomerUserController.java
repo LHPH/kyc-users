@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.kyc.users.constants.AppConstants.CHANNEL;
 
 @RestController
@@ -29,8 +32,11 @@ public class CustomerUserController {
     public ResponseEntity<ResponseData<Boolean>> registerUser(@RequestHeader(CHANNEL) Integer channel,
                                                               @Valid @RequestBody CustomerData req){
 
-        RequestData<CustomerData> input = RequestData.<CustomerData>builder()
+        Map<String,Object> headers = new HashMap<>();
+        headers.put(CHANNEL,channel);
 
+        RequestData<CustomerData> input = RequestData.<CustomerData>builder()
+                .headers(headers)
                 .body(req)
                 .build();
 
