@@ -21,16 +21,21 @@ public class HistoricLoginService {
 
     public void addHistoricLoginData(SessionData sessionData){
 
+        String sessionId = sessionData.getSessionId();
+        Long idUser = sessionData.getKycUser().getId();
+
         KycLoginHistoric loginHistoric = new KycLoginHistoric();
         loginHistoric.setUser(sessionData.getKycUser());
         loginHistoric.setIp(sessionData.getIp());
         loginHistoric.setIdChannel(sessionData.getIdChannel());
-        loginHistoric.setIdSession(sessionData.getSessionId());
+        loginHistoric.setIdSession(sessionId);
         loginHistoric.setActiveSession(true);
         loginHistoric.setDateLogin(sessionData.getNewDate());
         loginHistoric.setDateCheckpoint(sessionData.getNewDate());
 
-        kycLoginHistoricRepository.save(loginHistoric);
+        LOGGER.info("Saving the session {} in database",sessionId);
+        KycLoginHistoric result = kycLoginHistoricRepository.save(loginHistoric);
+        LOGGER.info("The session {} was generated for the user {}",sessionId,idUser);
     }
 
     public void addHistoricLogoutData(SessionData sessionData){
@@ -39,9 +44,15 @@ public class HistoricLoginService {
         if(opHistoricLogin.isPresent()){
 
             KycLoginHistoric loginHistoric = opHistoricLogin.get();
+
+            String sessionId = loginHistoric.getIdSession();
+            Long idUser = loginHistoric.getUser().getId();
+
             loginHistoric.setActiveSession(false);
             loginHistoric.setDateLogout(sessionData.getNewDate());
+            LOGGER.info("Canceling the session {} in database",loginHistoric.getIdSession());
             kycLoginHistoricRepository.save(loginHistoric);
+            LOGGER.info("The session {} was inactivated for the user {}",sessionId,idUser);
         }
     }
 
@@ -51,16 +62,24 @@ public class HistoricLoginService {
         if(opHistoricLogin.isPresent()){
 
             KycLoginHistoric loginHistoric = opHistoricLogin.get();
+
+            String sessionId = loginHistoric.getIdSession();
+            Long idUser = loginHistoric.getUser().getId();
+
             loginHistoric.setDateCheckpoint(sessionData.getNewDate());
+            LOGGER.info("Refreshing the session {}",sessionId);
             kycLoginHistoricRepository.save(loginHistoric);
+            LOGGER.info("The session {} was refreshed for the user {}",sessionId,idUser);
         }
     }
 
     public Optional<KycLoginHistoric> getCurrentSession(SessionData sessionData){
+        LOGGER.info("Retrieving the session {} in database",sessionData.getSessionId());
         return kycLoginHistoricRepository.getCurrentSession(sessionData.getSessionId());
     }
 
     public Optional<KycLoginHistoric> getCurrentSessionOnChannel(Long idUser, Integer idChannel){
+        LOGGER.info("Retrieving the current session in database through the channel {} and user id {}",idUser,idChannel);
         return kycLoginHistoricRepository.getCurrentSessionOnChannel(idUser,idChannel);
     }
 

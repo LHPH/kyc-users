@@ -70,6 +70,10 @@ kyc-messages:
         code: KYC-CUSTOMER-USER-011
         message: The session already has expired
         type: ERROR
+      "012":
+        code: KYC-CUSTOMER-USER-012
+        message: Welcome to KYC Platform
+        type: INFO
 
 logging:
   level:

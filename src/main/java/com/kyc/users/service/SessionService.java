@@ -56,10 +56,12 @@ public class SessionService {
         try{
 
             KycUser user = sessionData.getKycUser();
+            LOGGER.info("Opening a new session for the user {}",user.getId());
             KycLoginUserInfo loginUserInfo = user.getLoginUserInfo();
 
             if(loginUserInfo==null){
 
+                LOGGER.warn("The user {} does not have a login user info, creating data",user.getId());
                 loginUserInfo = new KycLoginUserInfo();
                 loginUserInfo.setDateFirstLogin(sessionData.getNewDate());
                 loginUserInfo.setUser(user);
@@ -67,6 +69,7 @@ public class SessionService {
 
             }
 
+            LOGGER.info("Updating login user info for the user {}",user.getId());
             loginUserInfo.setDateLastSuccessfulLogin(sessionData.getNewDate());
             loginUserInfo.setNumFailAttemptsCurrentLogin(0);
 

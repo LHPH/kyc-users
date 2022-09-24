@@ -14,6 +14,7 @@ import com.kyc.users.model.CustomerData;
 import com.kyc.users.repositories.KycUserRelationRepository;
 import com.kyc.users.repositories.KycUserRepository;
 import com.kyc.users.repositories.KycUserTypeRepository;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.passay.PasswordData;
 import org.passay.RuleResult;
 import org.slf4j.Logger;
@@ -23,12 +24,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
-import static com.kyc.users.constants.AppConstants.MSG_APP_003;
+import static com.kyc.users.constants.AppConstants.CHANNEL;
 import static com.kyc.users.constants.AppConstants.MSG_APP_004;
 import static com.kyc.users.constants.AppConstants.MSG_APP_005;
 import static com.kyc.users.constants.AppConstants.MSG_APP_010;
+import static com.kyc.users.constants.AppConstants.MSG_APP_012;
 
 @Service
 public class SignUpUserService {
@@ -51,21 +54,34 @@ public class SignUpUserService {
     private CustomerUserMapper customerUserMapper;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private KycMessages kycMessages;
 
     public ResponseData<Boolean> signUpUser(RequestData<CustomerData> req){
 
+        LOGGER.info("Process to register a new user");
         CustomerData customerData = req.getBody();
+        Map<String,Object> headers = req.getHeaders();
+        Integer idChannel = NumberUtils.toInt(headers.get(CHANNEL).toString());
+        LOGGER.info("The channel where the process is doing is {}",idChannel);
 
         verifiedPassword(customerData);
+        LOGGER.info("The password meets the requirements");
 
-        LOGGER.info("Checking if the username already exists en database {}", customerData.getUsername());
+        LOGGER.info("Checking if the username already exists en database");
         Optional<KycUser> opUser = kycUserRepository.findByUsername(customerData.getUsername());
         if(!opUser.isPresent()){
 
+            LOGGER.info("Checking if the user already has a user");
             if(!verifiedIfCustomerHasAlreadyUser(customerData.getCustomerNumber())){
 
-                saveUserDatabase(customerData);
+                LOGGER.info("Saving the new user in database");
+                Long idNewUser = saveUserDatabase(customerData);
+                LOGGER.info("The id of the created user is {}",idNewUser);
+                notificationService.sendNotificationTo(idChannel,idNewUser,kycMessages.getMessage(MSG_APP_012));
+                LOGGER.info("Finish process to register a new user");
                 return ResponseData.of(true);
             }
             throw KycRestException.builderRestException()
@@ -84,7 +100,7 @@ public class SignUpUserService {
     private void verifiedPassword(CustomerData req){
 
         PasswordData passwordData = new PasswordData(req.getUsername(),req.getPassword());
-        LOGGER.info("Checking if the password meets the password policy for {}",req.getUsername());
+        LOGGER.info("Checking if the password meets the password policy");
         RuleResult result = passwordFormatValidationService.validatePassword(passwordData);
 
         if(!result.isValid()){
@@ -102,7 +118,7 @@ public class SignUpUserService {
         return opUserRelation.isPresent();
     }
 
-    private void saveUserDatabase(CustomerData req){
+    private Long saveUserDatabase(CustomerData req){
 
         try{
 
@@ -118,9 +134,10 @@ public class SignUpUserService {
 
                 entity.setUserRelation(relation);
 
-                LOGGER.info("Saving the user data in the database {}", req.getUsername());
-                kycUserRepository.save(entity);
-                LOGGER.info("The user data was saved in database {}", req.getUsername());
+                LOGGER.info("Saving the user data in the database");
+                KycUser result = kycUserRepository.save(entity);
+                LOGGER.info("The user data was saved in database");
+                return result.getId();
             }
             else{
                 throw KycRestException.builderRestException()

@@ -40,7 +40,7 @@ public class CloseSessionSchedulingConfig implements SchedulingConfigurer {
     public TaskScheduler  taskScheduler() {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setPoolSize(5);
-        threadPoolTaskScheduler.setThreadNamePrefix("AutoCloseSession-");
+        threadPoolTaskScheduler.setThreadNamePrefix("TaskSchedule-");
         return threadPoolTaskScheduler;
     }
 

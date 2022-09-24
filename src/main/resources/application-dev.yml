@@ -5,6 +5,11 @@ spring:
     password: kyc_pass
     hikari:
       maximum-pool-size: 1
+  rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
   jpa:
     properties:
       hibernate:
@@ -12,6 +17,11 @@ spring:
           use_jdbc_metadata_defaults: false
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
 
+kyc-config:
+  token:
+    audience:
+      users: http://localhost:9004
+      notifications: http://localhost:9003
 
 server:
   port: 9004

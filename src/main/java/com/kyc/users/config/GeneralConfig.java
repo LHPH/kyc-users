@@ -2,6 +2,7 @@ package com.kyc.users.config;
 
 import com.kyc.core.config.BuildDetailConfig;
 import com.kyc.core.config.ClockConfig;
+import com.kyc.core.config.RabbitMqSenderConfig;
 import com.kyc.core.exception.handlers.KycGenericRestExceptionHandler;
 import com.kyc.core.exception.handlers.KycRestAuthValidationExceptionHandler;
 import com.kyc.core.exception.handlers.KycUnhandledExceptionHandler;
@@ -9,6 +10,7 @@ import com.kyc.core.exception.handlers.KycValidationRestExceptionHandler;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.core.services.PasswordFormatValidationService;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -19,7 +21,8 @@ import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 
 @Configuration
 @Import(value = {KycMessages.class, KycGenericRestExceptionHandler.class, BuildDetailConfig.class,
-        ClockConfig.class})
+        ClockConfig.class,RabbitMqSenderConfig.class})
+@EnableCaching
 public class GeneralConfig {
 
     @Bean

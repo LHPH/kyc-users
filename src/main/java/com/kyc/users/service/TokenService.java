@@ -6,6 +6,8 @@ import com.kyc.core.properties.KycMessages;
 import com.kyc.core.util.TokenUtil;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 @Service
 public class TokenService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenService.class);
+
     @Autowired
     private ParameterService parameterService;
 
@@ -30,6 +34,7 @@ public class TokenService {
     public String getToken(JWTData jwtData){
 
         try{
+            LOGGER.info("Generating token");
             String secret = parameterService.getParameter(KYC_SHARED_KEY).getValue();
             return TokenUtil.getToken(jwtData, JWSAlgorithm.HS256,secret.getBytes(StandardCharsets.UTF_8));
         }
@@ -47,6 +52,7 @@ public class TokenService {
     public JWTData readToken(String token){
 
         try{
+            LOGGER.info("Reading token");
             String secret = parameterService.getParameter(KYC_SHARED_KEY).getValue();
             return TokenUtil.getJwtData(token,JWSAlgorithm.HS256,secret.getBytes(StandardCharsets.UTF_8));
         }

@@ -15,6 +15,8 @@ public final class AppConstants {
     public static final String MSG_APP_011="011";
     public static final String MSG_APP_012="012";
 
+    public static final String KYC_USERS = "KYC_USERS";
+
     public static final String CHANNEL = "channel";
     public static final String IP = "IP";
 

@@ -20,4 +20,12 @@ public class CredentialData {
     @NotNull
     @Pattern(regexp = "^[a-zA-Z0-9_#\\.\\+\\*\\$]{8,15}$",message = "Bad format")
     private String password;
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("username='").append(username).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
