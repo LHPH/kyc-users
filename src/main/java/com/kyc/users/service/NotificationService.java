@@ -12,6 +12,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -87,7 +88,10 @@ public class NotificationService {
             }
         }
         catch(AmqpException ex){
-            LOGGER.error("It could not send notification due an error ",ex);
+            LOGGER.error("It could not send notification due an amqp error ",ex);
+        }
+        catch(DataAccessException ex){
+            LOGGER.error("It could not send notification due an database error ",ex);
         }
     }
 }

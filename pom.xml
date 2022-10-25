@@ -170,6 +170,8 @@
 						<exclude>com/kyc/users/KycUsersApplication.*</exclude>
 						<exclude>com/kyc/users/config/**</exclude>
 						<exclude>com/kyc/users/model/**/*</exclude>
+						<exclude>com/kyc/users/entity/**/*</exclude>
+						<exclude>com/kyc/users/mappers/**/*</exclude>
 					</excludes>
 				</configuration>
 				<executions>

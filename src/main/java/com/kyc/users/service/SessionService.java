@@ -1,8 +1,8 @@
 package com.kyc.users.service;
 
-import com.kyc.core.exception.KycRestException;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.util.DateUtil;
+import com.kyc.users.aspects.DatabaseHandlingException;
 import com.kyc.users.entity.KycLoginHistoric;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycParameter;
@@ -15,8 +15,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +26,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.kyc.users.constants.AppConstants.KYC_SESSION_TIMEOUT;
-import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 
 @Service
 public class SessionService {
@@ -51,143 +48,86 @@ public class SessionService {
     private Clock clock;
 
     @Transactional
+    @DatabaseHandlingException
     public void openSession(SessionData sessionData){
 
-        try{
+        KycUser user = sessionData.getKycUser();
+        LOGGER.info("Opening a new session for the user {}",user.getId());
+        KycLoginUserInfo loginUserInfo = user.getLoginUserInfo();
 
-            KycUser user = sessionData.getKycUser();
-            LOGGER.info("Opening a new session for the user {}",user.getId());
-            KycLoginUserInfo loginUserInfo = user.getLoginUserInfo();
+        if(loginUserInfo==null){
 
-            if(loginUserInfo==null){
+            LOGGER.warn("The user {} does not have a login user info, creating data",user.getId());
+            loginUserInfo = new KycLoginUserInfo();
+            loginUserInfo.setDateFirstLogin(sessionData.getNewDate());
+            loginUserInfo.setUser(user);
+            user.setLoginUserInfo(loginUserInfo);
 
-                LOGGER.warn("The user {} does not have a login user info, creating data",user.getId());
-                loginUserInfo = new KycLoginUserInfo();
-                loginUserInfo.setDateFirstLogin(sessionData.getNewDate());
-                loginUserInfo.setUser(user);
-                user.setLoginUserInfo(loginUserInfo);
-
-            }
-
-            LOGGER.info("Updating login user info for the user {}",user.getId());
-            loginUserInfo.setDateLastSuccessfulLogin(sessionData.getNewDate());
-            loginUserInfo.setNumFailAttemptsCurrentLogin(0);
-
-            kycUserRepository.save(user);
-            historicLoginService.addHistoricLoginData(sessionData);
         }
-        catch(DataAccessException ex){
 
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_010))
-                    .exception(ex)
-                    .build();
-        }
+        LOGGER.info("Updating login user info for the user {}",user.getId());
+        loginUserInfo.setDateLastSuccessfulLogin(sessionData.getNewDate());
+        loginUserInfo.setNumFailAttemptsCurrentLogin(0);
+
+        kycUserRepository.save(user);
+        historicLoginService.addHistoricLoginData(sessionData);
     }
 
     @Transactional
+    @DatabaseHandlingException
     public void closeSession(SessionData sessionData){
 
-        try{
-            if(hasActiveSession(sessionData)){
-                historicLoginService.addHistoricLogoutData(sessionData);
-            }
-        }
-        catch(DataAccessException ex){
-
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_010))
-                    .exception(ex)
-                    .build();
+        if(hasActiveSession(sessionData)){
+            historicLoginService.addHistoricLogoutData(sessionData);
         }
     }
 
     @Transactional
+    @DatabaseHandlingException
     public void closeIdleActiveSessions(){
 
-        try{
+        LOGGER.info("Retrieving active sessions");
+        List<KycLoginHistoric> idleSessions = historicLoginService.getActiveSessions()
+                .stream().filter( e -> !checkTimeCurrentSession(e))
+                .collect(Collectors.toList());
+        LOGGER.info("There are {} idle sessions",idleSessions.size());
+        idleSessions.forEach(idle -> {
 
-            LOGGER.info("Retrieving active sessions");
-            List<KycLoginHistoric> idleSessions = historicLoginService.getActiveSessions()
-                    .stream().filter( e -> !checkTimeCurrentSession(e))
-                    .collect(Collectors.toList());
-            LOGGER.info("There are {} idle sessions",idleSessions.size());
-            idleSessions.forEach(idle -> {
-
-                SessionData sessionData = SessionData.builder()
-                        .sessionId(idle.getIdSession())
-                        .newDate(new Date())
-                        .build();
-                historicLoginService.addHistoricLogoutData(sessionData);
-            });
-            LOGGER.info("Finish the auto close idle sessions");
-        }
-        catch(DataAccessException ex){
-
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_010))
-                    .exception(ex)
+            SessionData sessionData = SessionData.builder()
+                    .sessionId(idle.getIdSession())
+                    .newDate(new Date())
                     .build();
-        }
+            historicLoginService.addHistoricLogoutData(sessionData);
+        });
+        LOGGER.info("Finish the auto close idle sessions");
     }
 
     @Transactional
+    @DatabaseHandlingException
     public boolean renewSession(SessionData sessionData){
 
-        try{
+        if(hasActiveSession(sessionData)){
 
-            if(hasActiveSession(sessionData)){
-
-                historicLoginService.refreshCheckpoint(sessionData);
-                return true;
-            }
-            return false;
+            historicLoginService.refreshCheckpoint(sessionData);
+            return true;
         }
-        catch(DataAccessException ex){
-
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_010))
-                    .exception(ex)
-                    .build();
-        }
+        return false;
     }
 
+    @DatabaseHandlingException
     public boolean hasActiveSession(SessionData sessionData){
 
-        try{
-
-            Optional<KycLoginHistoric> opCurrentSession = historicLoginService.getCurrentSession(sessionData);
-            return opCurrentSession.filter(this::checkTimeCurrentSession)
-                    .isPresent();
-        }
-        catch(DataAccessException ex){
-
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_010))
-                    .exception(ex)
-                    .build();
-        }
+        Optional<KycLoginHistoric> opCurrentSession = historicLoginService.getCurrentSession(sessionData);
+        return opCurrentSession.filter(this::checkTimeCurrentSession)
+                .isPresent();
     }
 
+    @DatabaseHandlingException
     public boolean hasActiveSessionOnChannel(Long idUser, Integer idChannel){
 
-         try{
-             Optional<KycLoginHistoric> opCurrentSession = historicLoginService.getCurrentSessionOnChannel(idUser,idChannel);
-             return opCurrentSession.filter(this::checkTimeCurrentSession)
-                     .isPresent();
-         }
-         catch(DataAccessException ex){
-             throw KycRestException.builderRestException()
-                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                     .errorData(kycMessages.getMessage(MSG_APP_010))
-                     .exception(ex)
-                     .build();
-         }
+        Optional<KycLoginHistoric> opCurrentSession = historicLoginService.getCurrentSessionOnChannel(idUser,idChannel);
+        return opCurrentSession.filter(this::checkTimeCurrentSession)
+                .isPresent();
     }
 
     private boolean checkTimeCurrentSession(KycLoginHistoric currentSession){
@@ -195,12 +135,15 @@ public class SessionService {
         KycParameter kycParameter = parameterService.getParameter(KYC_SESSION_TIMEOUT);
         int sessionTimeout = NumberUtils.toInt(kycParameter.getValue(),15);
 
+
         Date dateCheckpoint = ObjectUtils.defaultIfNull(currentSession.getDateCheckpoint(),currentSession.getDateLogin());
-        LocalDateTime dateTime = DateUtil.dateToLocalDateTime(dateCheckpoint).plusMinutes(sessionTimeout);
+        LocalDateTime dateTimeCheckpoint = DateUtil.dateToLocalDateTime(dateCheckpoint);
+        LocalDateTime dateTimeLimit = dateTimeCheckpoint.plusMinutes(sessionTimeout);
 
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
-        boolean cond1 = dateTime.isAfter(currentDateTime);
-        boolean cond2 = dateTime.isEqual(currentDateTime);
-        return BooleanUtils.or(new boolean[]{cond1,cond2});
+        boolean cond1 = dateTimeCheckpoint.isEqual(currentDateTime);
+        boolean cond2 = currentDateTime.isBefore(dateTimeLimit);
+        boolean cond3 = currentDateTime.isEqual(dateTimeLimit);
+        return BooleanUtils.or(new boolean[]{cond1,cond2,cond3});
     }
 }

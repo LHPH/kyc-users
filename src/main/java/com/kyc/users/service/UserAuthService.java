@@ -7,6 +7,7 @@ import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
+import com.kyc.users.aspects.DatabaseHandlingException;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycParameter;
 import com.kyc.users.entity.KycUser;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,7 @@ import static com.kyc.users.constants.AppConstants.MSG_APP_006;
 import static com.kyc.users.constants.AppConstants.MSG_APP_007;
 import static com.kyc.users.constants.AppConstants.MSG_APP_008;
 import static com.kyc.users.constants.AppConstants.MSG_APP_009;
+import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 import static com.kyc.users.constants.AppConstants.MSG_APP_011;
 
 @Service
@@ -86,6 +89,7 @@ public class UserAuthService {
     }
 
     @Transactional
+    @DatabaseHandlingException
     public ResponseData<TokenData> signInUser(RequestData<CredentialData> req){
 
         LOGGER.info("Starting process to sign-in the user");
@@ -224,7 +228,7 @@ public class UserAuthService {
         int maxFailAttempts = NumberUtils.toInt(kycParameter.getValue(),3);
 
         LOGGER.warn("Checking number of failed attempts");
-        if(loginUserInfo.getNumFailAttemptsCurrentLogin()>maxFailAttempts){
+        if(loginUserInfo.getNumFailAttemptsCurrentLogin()>=maxFailAttempts){
 
             LOGGER.warn("The user {} exceed the allowed failed attempts, locking the user",user.getId());
             user.setLocked(true);

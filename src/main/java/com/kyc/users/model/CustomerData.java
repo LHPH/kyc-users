@@ -22,4 +22,9 @@ public class CustomerData extends CredentialData{
         sb.append('}');
         return sb.toString();
     }
+
+    public CustomerData(String username, String password, Long customerNumber){
+        super(username,password);
+        this.customerNumber = customerNumber;
+    }
 }

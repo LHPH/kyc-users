@@ -13,6 +13,7 @@ import com.kyc.core.services.PasswordFormatValidationService;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 import static com.kyc.users.constants.AppConstants.MSG_APP_001;
@@ -23,6 +24,7 @@ import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 @Import(value = {KycMessages.class, KycGenericRestExceptionHandler.class, BuildDetailConfig.class,
         ClockConfig.class,RabbitMqSenderConfig.class})
 @EnableCaching
+@EnableAspectJAutoProxy
 public class GeneralConfig {
 
     @Bean

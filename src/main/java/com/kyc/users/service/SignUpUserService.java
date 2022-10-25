@@ -5,6 +5,8 @@ import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordFormatValidationService;
+import com.kyc.users.aspects.DatabaseHandlingException;
+import com.kyc.users.delegate.CustomerUserDelegate;
 import com.kyc.users.entity.KycUser;
 import com.kyc.users.entity.KycUserRelation;
 import com.kyc.users.entity.KycUserType;
@@ -59,6 +61,7 @@ public class SignUpUserService {
     @Autowired
     private KycMessages kycMessages;
 
+    @DatabaseHandlingException
     public ResponseData<Boolean> signUpUser(RequestData<CustomerData> req){
 
         LOGGER.info("Process to register a new user");
@@ -84,11 +87,6 @@ public class SignUpUserService {
                 LOGGER.info("Finish process to register a new user");
                 return ResponseData.of(true);
             }
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .errorData(kycMessages.getMessage(MSG_APP_005))
-                    .inputData(req)
-                    .build();
         }
         throw KycRestException.builderRestException()
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -96,6 +94,7 @@ public class SignUpUserService {
                 .inputData(req)
                 .build();
     }
+
 
     private void verifiedPassword(CustomerData req){
 
@@ -112,6 +111,7 @@ public class SignUpUserService {
         }
     }
 
+    @DatabaseHandlingException
     public boolean verifiedIfCustomerHasAlreadyUser(Long customerNumber){
 
         Optional<KycUserRelation> opUserRelation = kycUserRelationRepository.findByIdCustomer(customerNumber);
@@ -120,42 +120,28 @@ public class SignUpUserService {
 
     private Long saveUserDatabase(CustomerData req){
 
-        try{
+        KycUser entity = customerUserMapper.toEntityForSigningUp(req);
 
-            KycUser entity = customerUserMapper.toEntityForSigningUp(req);
+        Optional<KycUserType> opUserType = kycUserTypeRepository.findById(KycUserTypeEnum.CUSTOMER.getId());
+        if(opUserType.isPresent()){
 
-            Optional<KycUserType> opUserType = kycUserTypeRepository.findById(KycUserTypeEnum.CUSTOMER.getId());
-            if(opUserType.isPresent()){
+            KycUserRelation relation = new KycUserRelation();
+            relation.setIdCustomer(req.getCustomerNumber());
+            relation.setUser(entity);
+            relation.setUserType(opUserType.get());
 
-                KycUserRelation relation = new KycUserRelation();
-                relation.setIdCustomer(req.getCustomerNumber());
-                relation.setUser(entity);
-                relation.setUserType(opUserType.get());
+            entity.setUserRelation(relation);
 
-                entity.setUserRelation(relation);
-
-                LOGGER.info("Saving the user data in the database");
-                KycUser result = kycUserRepository.save(entity);
-                LOGGER.info("The user data was saved in database");
-                return result.getId();
-            }
-            else{
-                throw KycRestException.builderRestException()
-                        .status(HttpStatus.SERVICE_UNAVAILABLE)
-                        .errorData(kycMessages.getMessage(MSG_APP_010))
-                        .inputData(req)
-                        .build();
-            }
+            LOGGER.info("Saving the user data in the database");
+            KycUser result = kycUserRepository.save(entity);
+            LOGGER.info("The user data was saved in database");
+            return result.getId();
         }
-        catch(DataAccessException ex){
-
-            throw KycRestException.builderRestException()
-                    .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .errorData(kycMessages.getMessage(MSG_APP_010))
-                    .exception(ex)
-                    .inputData(req)
-                    .build();
-        }
+        throw KycRestException.builderRestException()
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .errorData(kycMessages.getMessage(MSG_APP_010))
+                .inputData(req)
+                .build();
     }
 
 

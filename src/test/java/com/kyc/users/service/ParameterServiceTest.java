@@ -54,23 +54,6 @@ public class ParameterServiceTest {
     }
 
     @Test
-    public void getParameter_retrieveNonExistentParameter_throwException(){
-
-        Assertions.assertThrows(KycRestException.class,()->{
-
-            KycParameter parameter = new KycParameter();
-            parameter.setKey("PARAM");
-            parameter.setValue("VALUE");
-
-            when(kycParameterRepository.getKey(parameter.getKey()))
-                    .thenThrow(new InvalidDataAccessResourceUsageException("database error"));
-            when(kycMessages.getMessage(MSG_APP_010)).thenReturn(new MessageData());
-
-            service.getParameter("PARAM");
-        });
-    }
-
-    @Test
     public void getParameter_retrieveParameterButDatabaseUnavailable_throwException(){
 
         Assertions.assertThrows(KycRestException.class,()->{

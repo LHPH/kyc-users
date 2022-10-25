@@ -34,7 +34,7 @@ public class HistoricLoginService {
         loginHistoric.setDateCheckpoint(sessionData.getNewDate());
 
         LOGGER.info("Saving the session {} in database",sessionId);
-        KycLoginHistoric result = kycLoginHistoricRepository.save(loginHistoric);
+        kycLoginHistoricRepository.save(loginHistoric);
         LOGGER.info("The session {} was generated for the user {}",sessionId,idUser);
     }
 
