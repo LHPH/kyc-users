@@ -1,7 +1,6 @@
 package com.kyc.users.aspects;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.core.model.web.MessageData;
 import com.kyc.core.properties.KycMessages;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

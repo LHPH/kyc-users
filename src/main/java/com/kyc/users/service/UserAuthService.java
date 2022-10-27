@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,6 @@ import static com.kyc.users.constants.AppConstants.MSG_APP_006;
 import static com.kyc.users.constants.AppConstants.MSG_APP_007;
 import static com.kyc.users.constants.AppConstants.MSG_APP_008;
 import static com.kyc.users.constants.AppConstants.MSG_APP_009;
-import static com.kyc.users.constants.AppConstants.MSG_APP_010;
 import static com.kyc.users.constants.AppConstants.MSG_APP_011;
 
 @Service

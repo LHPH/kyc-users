@@ -5,7 +5,6 @@ import com.kyc.core.model.web.RequestData;
 import com.kyc.core.util.TestsUtil;
 import com.kyc.users.delegate.CustomerUserDelegate;
 import com.kyc.users.model.CustomerData;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -6,7 +6,6 @@ import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordFormatValidationService;
 import com.kyc.users.aspects.DatabaseHandlingException;
-import com.kyc.users.delegate.CustomerUserDelegate;
 import com.kyc.users.entity.KycUser;
 import com.kyc.users.entity.KycUserRelation;
 import com.kyc.users.entity.KycUserType;
@@ -22,7 +21,6 @@ import org.passay.RuleResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

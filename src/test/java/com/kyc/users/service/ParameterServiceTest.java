@@ -3,7 +3,6 @@ package com.kyc.users.service;
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.web.MessageData;
 import com.kyc.core.properties.KycMessages;
-import com.kyc.users.delegate.UserDelegateTest;
 import com.kyc.users.entity.KycParameter;
 import com.kyc.users.repositories.KycParameterRepository;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import java.util.Optional;
 
