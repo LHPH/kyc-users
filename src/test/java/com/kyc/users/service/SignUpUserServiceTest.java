@@ -1,17 +1,16 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.core.model.web.MessageData;
+import com.kyc.core.model.MessageData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordFormatValidationService;
 import com.kyc.users.entity.KycUser;
-import com.kyc.users.entity.KycUserRelation;
 import com.kyc.users.entity.KycUserType;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.mappers.CustomerUserMapper;
 import com.kyc.users.model.CustomerData;
-import com.kyc.users.repositories.KycUserRelationRepository;
+import com.kyc.users.repositories.KycCustomerRepository;
 import com.kyc.users.repositories.KycUserRepository;
 import com.kyc.users.repositories.KycUserTypeRepository;
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +51,7 @@ public class SignUpUserServiceTest {
     private KycUserTypeRepository kycUserTypeRepository;
 
     @Mock
-    private KycUserRelationRepository kycUserRelationRepository;
+    private KycCustomerRepository kycCustomerRepository;
 
     @Mock
     private PasswordFormatValidationService passwordFormatValidationService;
@@ -87,8 +86,8 @@ public class SignUpUserServiceTest {
                 .thenReturn(Optional.empty());
         when(passwordFormatValidationService.validatePassword(any(PasswordData.class)))
                 .thenReturn(ruleResult);
-        when(kycUserRelationRepository.findByIdCustomer(anyLong()))
-                .thenReturn(Optional.empty());
+        when(kycCustomerRepository.countHaveUser(anyLong()))
+                .thenReturn(0L);
         when(customerUserMapper.toEntityForSigningUp(any(CustomerData.class)))
                 .thenReturn(kycUser);
         when(kycUserTypeRepository.findById(KycUserTypeEnum.CUSTOMER.getId()))
@@ -173,8 +172,8 @@ public class SignUpUserServiceTest {
                     .thenReturn(Optional.empty());
             when(passwordFormatValidationService.validatePassword(any(PasswordData.class)))
                     .thenReturn(ruleResult);
-            when(kycUserRelationRepository.findByIdCustomer(anyLong()))
-                    .thenReturn(Optional.of(new KycUserRelation()));
+            when(kycCustomerRepository.countHaveUser(anyLong()))
+                    .thenReturn(1L);
 
             when(kycMessages.getMessage(MSG_APP_005))
                     .thenReturn(new MessageData());
@@ -204,8 +203,8 @@ public class SignUpUserServiceTest {
                     .thenReturn(Optional.empty());
             when(passwordFormatValidationService.validatePassword(any(PasswordData.class)))
                     .thenReturn(ruleResult);
-            when(kycUserRelationRepository.findByIdCustomer(anyLong()))
-                    .thenReturn(Optional.empty());
+            when(kycCustomerRepository.countHaveUser(anyLong()))
+                    .thenReturn(0L);
             when(customerUserMapper.toEntityForSigningUp(any(CustomerData.class)))
                     .thenReturn(kycUser);
             when(kycUserTypeRepository.findById(KycUserTypeEnum.CUSTOMER.getId()))

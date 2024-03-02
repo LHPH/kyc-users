@@ -6,13 +6,13 @@ import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordFormatValidationService;
 import com.kyc.users.aspects.DatabaseHandlingException;
+import com.kyc.users.entity.KycCustomer;
 import com.kyc.users.entity.KycUser;
-import com.kyc.users.entity.KycUserRelation;
 import com.kyc.users.entity.KycUserType;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.mappers.CustomerUserMapper;
 import com.kyc.users.model.CustomerData;
-import com.kyc.users.repositories.KycUserRelationRepository;
+import com.kyc.users.repositories.KycCustomerRepository;
 import com.kyc.users.repositories.KycUserRepository;
 import com.kyc.users.repositories.KycUserTypeRepository;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class SignUpUserService {
     private KycUserTypeRepository kycUserTypeRepository;
 
     @Autowired
-    private KycUserRelationRepository kycUserRelationRepository;
+    private KycCustomerRepository kycCustomerRepository;
 
     @Autowired
     private PasswordFormatValidationService passwordFormatValidationService;
@@ -60,6 +61,7 @@ public class SignUpUserService {
     private KycMessages kycMessages;
 
     @DatabaseHandlingException
+    @Transactional
     public ResponseData<Boolean> signUpUser(RequestData<CustomerData> req){
 
         LOGGER.info("Process to register a new user");
@@ -112,8 +114,7 @@ public class SignUpUserService {
     @DatabaseHandlingException
     public boolean verifiedIfCustomerHasAlreadyUser(Long customerNumber){
 
-        Optional<KycUserRelation> opUserRelation = kycUserRelationRepository.findByIdCustomer(customerNumber);
-        return opUserRelation.isPresent();
+         return kycCustomerRepository.countHaveUser(customerNumber) != 0;
     }
 
     private Long saveUserDatabase(CustomerData req){
@@ -123,16 +124,14 @@ public class SignUpUserService {
         Optional<KycUserType> opUserType = kycUserTypeRepository.findById(KycUserTypeEnum.CUSTOMER.getId());
         if(opUserType.isPresent()){
 
-            KycUserRelation relation = new KycUserRelation();
-            relation.setIdCustomer(req.getCustomerNumber());
-            relation.setUser(entity);
-            relation.setUserType(opUserType.get());
-
-            entity.setUserRelation(relation);
+            entity.setUserType(opUserType.get());
 
             LOGGER.info("Saving the user data in the database");
             KycUser result = kycUserRepository.save(entity);
             LOGGER.info("The user data was saved in database");
+            Long idUser = result.getId();
+            kycCustomerRepository.setUserToCustomer(idUser,req.getCustomerNumber());
+            LOGGER.info("The user {} was assigned to customer {}",idUser,req.getCustomerNumber());
             return result.getId();
         }
         throw KycRestException.builderRestException()

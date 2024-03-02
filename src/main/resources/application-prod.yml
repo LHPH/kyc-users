@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: ${kyc.config.database.postgresql.url}
+    username: ${kyc.config.database.postgresql.username}
+    password: ${kyc.config.database.postgresql.secret}
+    hikari:
+      maximum-pool-size: 10
+  rabbitmq:
+    username: ${kyc.config.amqp.rabbitmq.username}
+    password: ${kyc.config.amqp.rabbitmq.secret}
+    host: ${kyc.config.amqp.rabbitmq.host}
+    port: ${kyc.config.amqp.rabbitmq.port}
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 30
+    preferIpAddress: true
+  client:
+    enabled: true
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${kyc.config.hostname}:9100/eureka
+
+kyc-config:
+  token:
+    audience:
+      users: http://${kyc.config.hostname}:9004
+      notifications: http://${kyc.config.hostname}:9003
+
+logging:
+  file:
+    name: /opt/kyc/logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: /opt/kyc/logs/${spring.application.name}/%d{yyyy-MM-dd}.%i.log.gz
+      max-file-size: 50MB
+      max-history: 3
+  level:
+    root: INFO
+    com.kyc: INFO
+    org.springframework: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql: INFO
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE

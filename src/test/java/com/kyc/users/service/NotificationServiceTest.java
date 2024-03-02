@@ -3,7 +3,7 @@ package com.kyc.users.service;
 import com.kyc.core.enums.MessageType;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.notifications.NotificationData;
-import com.kyc.core.model.web.MessageData;
+import com.kyc.core.model.MessageData;
 import com.kyc.users.entity.KycUser;
 import com.kyc.users.repositories.KycUserRepository;
 import org.junit.jupiter.api.BeforeAll;

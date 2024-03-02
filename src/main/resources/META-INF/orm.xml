@@ -37,4 +37,17 @@
         </query>
     </named-native-query>
 
+    <named-native-query name="KycCustomer.setUserToCustomer"
+                        result-class="com.kyc.users.entity.KycCustomer">
+        <query>
+            UPDATE KYC_CUSTOMER SET ID_USER=?1 WHERE ID=?2
+        </query>
+    </named-native-query>
+
+    <named-native-query name="KycCustomer.countHaveUser">
+        <query>
+            SELECT COUNT(*) FROM KYC_CUSTOMER WHERE ID=?1 AND ID_USER IS NOT NULL
+        </query>
+    </named-native-query>
+
 </entity-mappings>

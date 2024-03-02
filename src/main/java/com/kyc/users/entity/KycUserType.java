@@ -20,7 +20,7 @@ public class KycUserType implements Serializable {
     private Long id;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "userType",orphanRemoval = true)
-    private List<KycUserRelation> userRelations;
+    private List<KycUser> userRelations;
 
     @Column(name = "DESCRIPTION")
     private String description;

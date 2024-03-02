@@ -11,7 +11,6 @@ import com.kyc.users.aspects.DatabaseHandlingException;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycParameter;
 import com.kyc.users.entity.KycUser;
-import com.kyc.users.entity.KycUserRelation;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
 import com.kyc.users.model.SessionData;
@@ -246,8 +245,7 @@ public class UserAuthService {
 
     private void checkValidTypeUser(KycUser user){
 
-        KycUserRelation relation = user.getUserRelation();
-        KycUserTypeEnum type = KycUserTypeEnum.getInstanceById(relation.getUserType().getId());
+        KycUserTypeEnum type = KycUserTypeEnum.getInstanceById(user.getUserType().getId());
 
         if(!ALLOWED_TYPES.contains(type)){
 

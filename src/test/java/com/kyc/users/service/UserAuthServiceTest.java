@@ -3,7 +3,7 @@ package com.kyc.users.service;
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.jwt.TokenData;
-import com.kyc.core.model.web.MessageData;
+import com.kyc.core.model.MessageData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
@@ -11,7 +11,6 @@ import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycParameter;
 import com.kyc.users.entity.KycUser;
-import com.kyc.users.entity.KycUserRelation;
 import com.kyc.users.entity.KycUserType;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
@@ -110,8 +109,7 @@ public class UserAuthServiceTest {
         user.setSecret("user");
         user.setActive(true);
         user.setLocked(false);
-        user.setUserRelation(new KycUserRelation());
-        user.getUserRelation().setUserType(userType);
+        user.setUserType(userType);
 
         when(kycUserRepository.findByUsername(anyString()))
                 .thenReturn(Optional.of(user));
@@ -139,8 +137,7 @@ public class UserAuthServiceTest {
         user.setSecret("user");
         user.setActive(true);
         user.setLocked(false);
-        user.setUserRelation(new KycUserRelation());
-        user.getUserRelation().setUserType(userType);
+        user.setUserType(userType);
 
         when(kycUserRepository.findByUsername(anyString()))
                 .thenReturn(Optional.of(user));
@@ -170,8 +167,7 @@ public class UserAuthServiceTest {
         user.setSecret("user");
         user.setActive(true);
         user.setLocked(false);
-        user.setUserRelation(new KycUserRelation());
-        user.getUserRelation().setUserType(userType);
+        user.setUserType(userType);
 
         KycLoginUserInfo loginUserInfo = new KycLoginUserInfo();
         loginUserInfo.setNumFailAttemptsCurrentLogin(2);
@@ -205,8 +201,7 @@ public class UserAuthServiceTest {
             user.setSecret("user");
             user.setActive(true);
             user.setLocked(true);
-            user.setUserRelation(new KycUserRelation());
-            user.getUserRelation().setUserType(userType);
+            user.setUserType(userType);
 
             when(kycUserRepository.findByUsername(anyString()))
                     .thenReturn(Optional.of(user));
@@ -234,8 +229,7 @@ public class UserAuthServiceTest {
             user.setSecret("user");
             user.setActive(false);
             user.setLocked(false);
-            user.setUserRelation(new KycUserRelation());
-            user.getUserRelation().setUserType(userType);
+            user.setUserType(userType);
 
             when(kycUserRepository.findByUsername(anyString()))
                     .thenReturn(Optional.of(user));
@@ -263,8 +257,7 @@ public class UserAuthServiceTest {
             user.setSecret("user");
             user.setActive(true);
             user.setLocked(false);
-            user.setUserRelation(new KycUserRelation());
-            user.getUserRelation().setUserType(userType);
+            user.setUserType(userType);
 
             when(kycUserRepository.findByUsername(anyString()))
                     .thenReturn(Optional.of(user));
@@ -294,8 +287,7 @@ public class UserAuthServiceTest {
             user.setSecret("user");
             user.setActive(true);
             user.setLocked(false);
-            user.setUserRelation(new KycUserRelation());
-            user.getUserRelation().setUserType(userType);
+            user.setUserType(userType);
 
             when(kycUserRepository.findByUsername(anyString()))
                     .thenReturn(Optional.of(user));

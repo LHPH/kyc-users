@@ -1,7 +1,7 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.core.model.web.MessageData;
+import com.kyc.core.model.MessageData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.users.entity.KycParameter;
 import com.kyc.users.repositories.KycParameterRepository;
