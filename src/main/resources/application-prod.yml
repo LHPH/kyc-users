@@ -5,6 +5,8 @@ spring:
     password: ${kyc.config.database.postgresql.secret}
     hikari:
       maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
   rabbitmq:
     username: ${kyc.config.amqp.rabbitmq.username}
     password: ${kyc.config.amqp.rabbitmq.secret}
