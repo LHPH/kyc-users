@@ -1,6 +1,7 @@
 package com.kyc.users.controllers;
 
 import com.kyc.core.model.jwt.TokenData;
+import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.util.TokenUtil;
@@ -46,8 +47,8 @@ public class GeneralUserController {
 
 
     @PostMapping("/session-checking")
-    public ResponseEntity<ResponseData<Void>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-                                                @RequestHeader(CHANNEL) String channel){
+    public ResponseEntity<ResponseData<TokenMetaData>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+                                                                       @RequestHeader(CHANNEL) String channel){
 
         Map<String,Object> headers = new HashMap<>();
         headers.put(CHANNEL,channel);

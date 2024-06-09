@@ -4,6 +4,7 @@ import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.MessageData;
+import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
@@ -326,7 +327,7 @@ public class UserAuthServiceTest {
         when(sessionService.renewSession(any(SessionData.class)))
                 .thenReturn(true);
 
-        ResponseData<Void> response = service.renewSession(req);
+        ResponseData<TokenMetaData> response = service.renewSession(req);
         Assertions.assertEquals(HttpStatus.OK,response.getHttpStatus());
     }
 
@@ -344,7 +345,7 @@ public class UserAuthServiceTest {
         when(kycMessages.getMessage(MSG_APP_011))
                 .thenReturn(new MessageData());
 
-        ResponseData<Void> response = service.renewSession(req);
+        ResponseData<TokenMetaData> response = service.renewSession(req);
         Assertions.assertEquals(HttpStatus.FORBIDDEN,response.getHttpStatus());
     }
 }

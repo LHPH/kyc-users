@@ -1,6 +1,7 @@
 package com.kyc.users.delegate;
 
 import com.kyc.core.model.jwt.TokenData;
+import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.users.model.CredentialData;
@@ -25,7 +26,7 @@ public class UserDelegate {
         return userAuthService.signOutUser(req).toResponseEntity();
     }
 
-    public ResponseEntity<ResponseData<Void>> sessionChecking(RequestData<Void> req){
+    public ResponseEntity<ResponseData<TokenMetaData>> sessionChecking(RequestData<Void> req){
 
         return userAuthService.renewSession(req).toResponseEntity();
     }

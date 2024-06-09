@@ -3,6 +3,7 @@ package com.kyc.users.service;
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.jwt.TokenData;
+import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.properties.KycMessages;
@@ -130,6 +131,7 @@ public class UserAuthService {
                 jwtData.setSubject(String.valueOf(user.getId()));
                 jwtData.setKey(sessionData.getSessionId());
                 jwtData.setAudience(tokenAudience);
+                jwtData.setRole(KycUserTypeEnum.getInstanceById(user.getUserType().getId()).name());
 
                 LOGGER.info("Generating and returning access token");
                 return ResponseData.of(new TokenData(tokenService.getToken(jwtData)));
@@ -171,7 +173,7 @@ public class UserAuthService {
     }
 
     @Transactional
-    public ResponseData<Void> renewSession(RequestData<Void> req){
+    public ResponseData<TokenMetaData> renewSession(RequestData<Void> req){
 
         LOGGER.info("Starting process to renew the user session");
         Map<String,Object> map = req.getHeaders();
@@ -192,8 +194,13 @@ public class UserAuthService {
 
         if(isRenewed){
 
+            TokenMetaData tokenMetaData = TokenMetaData.builder()
+                    .originChannel(data.getChannel())
+                    .sub(data.getSubject())
+                    .role(data.getRole())
+                    .build();
             LOGGER.info("The session {} was renewed",key);
-            return ResponseData.emptyResponse();
+            return ResponseData.of(tokenMetaData);
         }
         else{
 
