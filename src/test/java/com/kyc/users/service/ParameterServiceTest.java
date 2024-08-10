@@ -2,9 +2,9 @@ package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.MessageData;
+import com.kyc.core.persistence.entity.KycParameter;
+import com.kyc.core.persistence.repositories.KycParameterRepository;
 import com.kyc.core.properties.KycMessages;
-import com.kyc.users.entity.KycParameter;
-import com.kyc.users.repositories.KycParameterRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

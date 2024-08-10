@@ -1,7 +1,7 @@
 package com.kyc.users.service;
 
 import com.kyc.users.entity.KycLoginHistoric;
-import com.kyc.users.entity.KycUser;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.model.SessionData;
 import com.kyc.users.repositories.KycLoginHistoricRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,7 +39,7 @@ public class HistoricLoginServiceTest {
 
         SessionData sessionData = SessionData.builder()
                 .sessionId("id")
-                .kycUser(new KycUser())
+                .kycUser(new KycUserExtend())
                 .build();
 
         historicLoginService.addHistoricLoginData(sessionData);
@@ -52,11 +52,11 @@ public class HistoricLoginServiceTest {
 
         SessionData sessionData = SessionData.builder()
                 .sessionId("id")
-                .kycUser(new KycUser())
+                .kycUser(new KycUserExtend())
                 .build();
 
         KycLoginHistoric savedSession = new KycLoginHistoric();
-        savedSession.setUser(new KycUser());
+        savedSession.setUser(new KycUserExtend());
         savedSession.setIdSession("id");
 
         when(kycLoginHistoricRepository.getCurrentSession(anyString()))
@@ -72,7 +72,7 @@ public class HistoricLoginServiceTest {
 
         SessionData sessionData = SessionData.builder()
                 .sessionId("id")
-                .kycUser(new KycUser())
+                .kycUser(new KycUserExtend())
                 .build();
 
         when(kycLoginHistoricRepository.getCurrentSession(anyString()))
@@ -88,7 +88,7 @@ public class HistoricLoginServiceTest {
 
         SessionData sessionData = SessionData.builder().sessionId("id").build();
         KycLoginHistoric savedSession = new KycLoginHistoric();
-        savedSession.setUser(new KycUser());
+        savedSession.setUser(new KycUserExtend());
 
         when(historicLoginService.getCurrentSession(sessionData))
                 .thenReturn(Optional.of(savedSession));

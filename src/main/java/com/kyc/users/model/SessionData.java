@@ -1,7 +1,7 @@
 package com.kyc.users.model;
 
 
-import com.kyc.users.entity.KycUser;
+import com.kyc.users.entity.KycUserExtend;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 public class SessionData {
 
-    private KycUser kycUser;
+    private KycUserExtend kycUser;
     private Integer idChannel;
     private String sessionId;
     private String ip;

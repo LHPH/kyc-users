@@ -1,11 +1,11 @@
 package com.kyc.users.service;
 
+import com.kyc.core.model.MessageData;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.notifications.NotificationData;
-import com.kyc.core.model.MessageData;
 import com.kyc.core.util.DateUtil;
-import com.kyc.users.entity.KycUser;
-import com.kyc.users.repositories.KycUserRepository;
+import com.kyc.users.entity.KycUserExtend;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
@@ -34,7 +34,7 @@ public class NotificationService {
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -52,10 +52,10 @@ public class NotificationService {
 
         try{
 
-            Optional<KycUser> opUser = kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS);
+            Optional<KycUserExtend> opUser = kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS);
             if(opUser.isPresent()){
 
-                KycUser user = opUser.get();
+                KycUserExtend user = opUser.get();
 
                 JWTData jwtData = new JWTData();
                 jwtData.setChannel(String.valueOf(idChannel));

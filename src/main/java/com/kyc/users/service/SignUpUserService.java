@@ -3,18 +3,17 @@ package com.kyc.users.service;
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
+import com.kyc.core.persistence.entity.KycUserType;
+import com.kyc.core.persistence.repositories.KycUserTypeRepository;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordFormatValidationService;
 import com.kyc.users.aspects.DatabaseHandlingException;
-import com.kyc.users.entity.KycCustomer;
-import com.kyc.users.entity.KycUser;
-import com.kyc.users.entity.KycUserType;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.mappers.CustomerUserMapper;
 import com.kyc.users.model.CustomerData;
 import com.kyc.users.repositories.KycCustomerRepository;
-import com.kyc.users.repositories.KycUserRepository;
-import com.kyc.users.repositories.KycUserTypeRepository;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.passay.PasswordData;
 import org.passay.RuleResult;
@@ -40,7 +39,7 @@ public class SignUpUserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SignUpUserService.class);
 
     @Autowired
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Autowired
     private KycUserTypeRepository kycUserTypeRepository;
@@ -74,7 +73,7 @@ public class SignUpUserService {
         LOGGER.info("The password meets the requirements");
 
         LOGGER.info("Checking if the username already exists en database");
-        Optional<KycUser> opUser = kycUserRepository.findByUsername(customerData.getUsername());
+        Optional<KycUserExtend> opUser = kycUserRepository.findByUsername(customerData.getUsername());
         if(!opUser.isPresent()){
 
             LOGGER.info("Checking if the user already has a user");
@@ -119,7 +118,7 @@ public class SignUpUserService {
 
     private Long saveUserDatabase(CustomerData req){
 
-        KycUser entity = customerUserMapper.toEntityForSigningUp(req);
+        KycUserExtend entity = customerUserMapper.toEntityForSigningUp(req);
 
         Optional<KycUserType> opUserType = kycUserTypeRepository.findById(KycUserTypeEnum.CUSTOMER.getId());
         if(opUserType.isPresent()){
@@ -127,7 +126,7 @@ public class SignUpUserService {
             entity.setUserType(opUserType.get());
 
             LOGGER.info("Saving the user data in the database");
-            KycUser result = kycUserRepository.save(entity);
+            KycUserExtend result = kycUserRepository.save(entity);
             LOGGER.info("The user data was saved in database");
             Long idUser = result.getId();
             kycCustomerRepository.setUserToCustomer(idUser,req.getCustomerNumber());

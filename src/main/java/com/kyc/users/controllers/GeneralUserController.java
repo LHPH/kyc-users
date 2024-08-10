@@ -7,6 +7,7 @@ import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.util.TokenUtil;
 import com.kyc.users.delegate.UserDelegate;
 import com.kyc.users.model.CredentialData;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 

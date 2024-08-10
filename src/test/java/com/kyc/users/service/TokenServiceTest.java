@@ -1,10 +1,10 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.MessageData;
+import com.kyc.core.model.jwt.JWTData;
+import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
-import com.kyc.users.entity.KycParameter;
 import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

@@ -1,22 +1,22 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
+import com.kyc.core.model.MessageData;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.jwt.TokenData;
-import com.kyc.core.model.MessageData;
 import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
+import com.kyc.core.persistence.entity.KycParameter;
+import com.kyc.core.persistence.entity.KycUserType;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.users.entity.KycLoginUserInfo;
-import com.kyc.users.entity.KycParameter;
-import com.kyc.users.entity.KycUser;
-import com.kyc.users.entity.KycUserType;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
 import com.kyc.users.model.SessionData;
-import com.kyc.users.repositories.KycUserRepository;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 public class UserAuthServiceTest {
 
     @Mock
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Mock
     private PasswordEncoderService passwordEncoderService;
@@ -104,7 +104,7 @@ public class UserAuthServiceTest {
         KycUserType userType = new KycUserType();
         userType.setId(KycUserTypeEnum.CUSTOMER.getId());
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setId(1L);
         user.setUsername("user");
         user.setSecret("user");
@@ -132,7 +132,7 @@ public class UserAuthServiceTest {
         KycUserType userType = new KycUserType();
         userType.setId(KycUserTypeEnum.CUSTOMER.getId());
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setId(1L);
         user.setUsername("user");
         user.setSecret("user");
@@ -162,7 +162,7 @@ public class UserAuthServiceTest {
         KycUserType userType = new KycUserType();
         userType.setId(KycUserTypeEnum.CUSTOMER.getId());
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setId(1L);
         user.setUsername("user");
         user.setSecret("user");
@@ -196,7 +196,7 @@ public class UserAuthServiceTest {
             KycUserType userType = new KycUserType();
             userType.setId(KycUserTypeEnum.CUSTOMER.getId());
 
-            KycUser user = new KycUser();
+            KycUserExtend user = new KycUserExtend();
             user.setId(1L);
             user.setUsername("user");
             user.setSecret("user");
@@ -224,7 +224,7 @@ public class UserAuthServiceTest {
             KycUserType userType = new KycUserType();
             userType.setId(KycUserTypeEnum.CUSTOMER.getId());
 
-            KycUser user = new KycUser();
+            KycUserExtend user = new KycUserExtend();
             user.setId(1L);
             user.setUsername("user");
             user.setSecret("user");
@@ -252,7 +252,7 @@ public class UserAuthServiceTest {
             KycUserType userType = new KycUserType();
             userType.setId(KycUserTypeEnum.CUSTOMER.getId());
 
-            KycUser user = new KycUser();
+            KycUserExtend user = new KycUserExtend();
             user.setId(1L);
             user.setUsername("user");
             user.setSecret("user");
@@ -282,7 +282,7 @@ public class UserAuthServiceTest {
             KycUserType userType = new KycUserType();
             userType.setId(KycUserTypeEnum.SYSTEM.getId());
 
-            KycUser user = new KycUser();
+            KycUserExtend user = new KycUserExtend();
             user.setId(1L);
             user.setUsername("user");
             user.setSecret("user");

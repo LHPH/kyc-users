@@ -1,10 +1,10 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
+import com.kyc.core.persistence.entity.KycParameter;
+import com.kyc.core.persistence.repositories.KycParameterRepository;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.users.aspects.DatabaseHandlingException;
-import com.kyc.users.entity.KycParameter;
-import com.kyc.users.repositories.KycParameterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,11 +10,13 @@ import com.kyc.core.exception.handlers.KycValidationRestExceptionHandler;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.core.services.PasswordFormatValidationService;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import static com.kyc.users.constants.AppConstants.MSG_APP_001;
 import static com.kyc.users.constants.AppConstants.MSG_APP_002;
@@ -24,6 +26,8 @@ import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 @Import(value = {KycMessages.class, KycGenericRestExceptionHandler.class, BuildDetailConfig.class,
         ClockConfig.class,RabbitMqSenderConfig.class})
 @EnableCaching
+@EnableJpaRepositories(basePackages = {"com.kyc.core.persistence.repositories","com.kyc.users.repositories"})
+@EntityScan(basePackages = {"com.kyc.core.persistence.entity","com.kyc.users.entity"})
 @EnableAspectJAutoProxy
 public class GeneralConfig {
 

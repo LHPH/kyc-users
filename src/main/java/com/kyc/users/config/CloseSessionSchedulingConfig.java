@@ -1,7 +1,7 @@
 package com.kyc.users.config;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.users.entity.KycParameter;
+import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.users.service.ParameterService;
 import com.kyc.users.service.SessionService;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -18,7 +18,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Optional;
 
 import static com.kyc.users.constants.AppConstants.KYC_SESSION_TIMEOUT;
@@ -58,12 +57,10 @@ public class CloseSessionSchedulingConfig implements SchedulingConfigurer {
             }
         }, context -> {
 
-            Optional<Date> lastCompletionTime =
-                    Optional.ofNullable(context.lastCompletionTime());
-            Instant nextExecutionTime =
-                    lastCompletionTime.orElseGet(Date::new).toInstant()
+            Optional<Instant> lastCompletionTime =
+                    Optional.ofNullable(context.lastCompletion());
+            return lastCompletionTime.orElseGet(Instant::now)
                             .plus(NumberUtils.toLong(parameter.getValue()), ChronoUnit.MINUTES);
-            return Date.from(nextExecutionTime);
         });
     }
 }

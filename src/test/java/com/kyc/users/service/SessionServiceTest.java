@@ -1,12 +1,12 @@
 package com.kyc.users.service;
 
+import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.users.entity.KycLoginHistoric;
 import com.kyc.users.entity.KycLoginUserInfo;
-import com.kyc.users.entity.KycParameter;
-import com.kyc.users.entity.KycUser;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.model.SessionData;
-import com.kyc.users.repositories.KycUserRepository;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class SessionServiceTest {
     private ParameterService parameterService;
 
     @Mock
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Mock
     private KycMessages kycMessages;
@@ -69,7 +69,7 @@ public class SessionServiceTest {
     @Test
     public void openSession_firstTimeOpeningSession_openedSession(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -83,7 +83,7 @@ public class SessionServiceTest {
     @Test
     public void openSession_openNewSession_openedSession(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setLoginUserInfo(new KycLoginUserInfo());
 
         SessionData sessionData = SessionData.builder()
@@ -98,7 +98,7 @@ public class SessionServiceTest {
     @Test
     public void closeSession_closingActiveSession_closedSession(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -123,7 +123,7 @@ public class SessionServiceTest {
     @Test
     public void closeSession_closingActiveSession_closedSession2(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -148,7 +148,7 @@ public class SessionServiceTest {
     @Test
     public void closeSession_closingInactiveSession_nothingToDo(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -214,7 +214,7 @@ public class SessionServiceTest {
     @Test
     public void renewSession_renewingSession_sessionWasRenewed(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -236,7 +236,7 @@ public class SessionServiceTest {
     @Test
     public void renewSession_sessionNoActive_sessionWasNotRenewed(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -252,7 +252,7 @@ public class SessionServiceTest {
     @Test
     public void hasActiveSession_theSessionIsActive_returnTrue(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)
@@ -273,7 +273,7 @@ public class SessionServiceTest {
     @Test
     public void hasActiveSession_theSessionIsNotActive_returnFalse(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
 
         SessionData sessionData = SessionData.builder()
                 .kycUser(user)

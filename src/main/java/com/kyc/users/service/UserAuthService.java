@@ -6,16 +6,16 @@ import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
+import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.users.aspects.DatabaseHandlingException;
 import com.kyc.users.entity.KycLoginUserInfo;
-import com.kyc.users.entity.KycParameter;
-import com.kyc.users.entity.KycUser;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
 import com.kyc.users.model.SessionData;
-import com.kyc.users.repositories.KycUserRepository;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class UserAuthService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserAuthService.class);
 
     @Autowired
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Autowired
     private PasswordEncoderService passwordEncoderService;
@@ -97,11 +97,11 @@ public class UserAuthService {
         LOGGER.info("The user wants to auth since channel {} and ip {}",idChannel,ip);
 
         LOGGER.info("Checking if the user exists");
-        Optional<KycUser> opUser = kycUserRepository.findByUsername(credentialData.getUsername());
+        Optional<KycUserExtend> opUser = kycUserRepository.findByUsername(credentialData.getUsername());
 
         if(opUser.isPresent()){
 
-            KycUser user = opUser.get();
+            KycUserExtend user = opUser.get();
             String pass = user.getSecret();
             LOGGER.info("Checking if the user type is valid");
             checkValidTypeUser(user);
@@ -210,7 +210,7 @@ public class UserAuthService {
         }
     }
 
-    private ResponseData<TokenData> failLoginActions(KycUser user){
+    private ResponseData<TokenData> failLoginActions(KycUserExtend user){
 
         KycLoginUserInfo loginUserInfo = user.getLoginUserInfo();
         if(loginUserInfo==null){
@@ -250,7 +250,7 @@ public class UserAuthService {
                 .build();
     }
 
-    private void checkValidTypeUser(KycUser user){
+    private void checkValidTypeUser(KycUserExtend user){
 
         KycUserTypeEnum type = KycUserTypeEnum.getInstanceById(user.getUserType().getId());
 
@@ -265,7 +265,7 @@ public class UserAuthService {
 
     }
 
-    private void checkEnabledUser(KycUser user){
+    private void checkEnabledUser(KycUserExtend user){
 
         if(!Boolean.TRUE.equals(user.getActive())){
 
@@ -286,7 +286,7 @@ public class UserAuthService {
         }
     }
 
-    private void checkNoCurrentSessionOnChannel(KycUser user, Integer idChannel){
+    private void checkNoCurrentSessionOnChannel(KycUserExtend user, Integer idChannel){
 
         boolean hasSession = sessionService.hasActiveSessionOnChannel(user.getId(),idChannel);
         if(hasSession){

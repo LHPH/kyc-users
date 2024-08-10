@@ -1,14 +1,14 @@
 package com.kyc.users.service;
 
+import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.util.DateUtil;
 import com.kyc.users.aspects.DatabaseHandlingException;
 import com.kyc.users.entity.KycLoginHistoric;
 import com.kyc.users.entity.KycLoginUserInfo;
-import com.kyc.users.entity.KycParameter;
-import com.kyc.users.entity.KycUser;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.model.SessionData;
-import com.kyc.users.repositories.KycUserRepository;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -39,7 +39,7 @@ public class SessionService {
     private ParameterService parameterService;
 
     @Autowired
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Autowired
     private KycMessages kycMessages;
@@ -51,7 +51,7 @@ public class SessionService {
     @DatabaseHandlingException
     public void openSession(SessionData sessionData){
 
-        KycUser user = sessionData.getKycUser();
+        KycUserExtend user = sessionData.getKycUser();
         LOGGER.info("Opening a new session for the user {}",user.getId());
         KycLoginUserInfo loginUserInfo = user.getLoginUserInfo();
 

@@ -1,16 +1,16 @@
 package com.kyc.users.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,7 +26,7 @@ public class KycLoginUserInfo implements Serializable {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER",referencedColumnName = "ID")
-    private KycUser user;
+    private KycUserExtend user;
 
     @Column(name = "DATE_FIRST_LOGIN")
     private Date dateFirstLogin;

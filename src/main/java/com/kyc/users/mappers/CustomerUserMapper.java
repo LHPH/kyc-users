@@ -2,7 +2,7 @@ package com.kyc.users.mappers;
 
 import com.kyc.core.annotations.EncodedMapping;
 import com.kyc.core.services.PasswordEncoderService;
-import com.kyc.users.entity.KycUser;
+import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CustomerData;
 import org.mapstruct.Mapper;
@@ -22,7 +22,7 @@ public interface CustomerUserMapper {
             @Mapping(target="locked", constant = "false"),
             @Mapping(target="dateCreation",expression = "java(new java.util.Date())")
     })
-    KycUser toEntityForSigningUp(CustomerData user);
+    KycUserExtend toEntityForSigningUp(CustomerData user);
 
     @Named("getUserType")
     static Long getUserType(){

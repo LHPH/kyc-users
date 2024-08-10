@@ -1,11 +1,11 @@
 package com.kyc.users.service;
 
 import com.kyc.core.enums.MessageType;
+import com.kyc.core.model.MessageData;
 import com.kyc.core.model.jwt.JWTData;
 import com.kyc.core.model.notifications.NotificationData;
-import com.kyc.core.model.MessageData;
-import com.kyc.users.entity.KycUser;
-import com.kyc.users.repositories.KycUserRepository;
+import com.kyc.users.entity.KycUserExtend;
+import com.kyc.users.repositories.KycUserExtendRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ public class NotificationServiceTest {
     private RabbitTemplate rabbitTemplate;
 
     @Mock
-    private KycUserRepository kycUserRepository;
+    private KycUserExtendRepository kycUserRepository;
 
     @Mock
     private TokenService tokenService;
@@ -68,7 +68,7 @@ public class NotificationServiceTest {
     @Test
     public void sendNotificationTo_sendingNotification_sentNotification(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setId(3L);
         when(kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS))
                 .thenReturn(Optional.of(user));
@@ -96,7 +96,7 @@ public class NotificationServiceTest {
     @Test
     public void sendNotificationTo_errorSendingNotificationByRabbit_notificationNotSent(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setId(3L);
         when(kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS))
                 .thenReturn(Optional.of(user));
@@ -115,7 +115,7 @@ public class NotificationServiceTest {
     @Test
     public void sendNotificationTo_unavailableDatabase_notificationNotSent(){
 
-        KycUser user = new KycUser();
+        KycUserExtend user = new KycUserExtend();
         user.setId(3L);
         when(kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS))
                 .thenThrow(new InvalidDataAccessResourceUsageException("test db error"));

@@ -1,10 +1,9 @@
 package com.kyc.users.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @Setter
