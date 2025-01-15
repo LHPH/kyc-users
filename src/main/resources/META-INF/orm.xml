@@ -7,7 +7,7 @@
     <!--native SQL query-->
     <named-native-query name="KycParameter.getKey"
                         result-class="com.kyc.core.persistence.entity.KycParameter">
-        <query>SELECT PARAM_KEY,PARAM_VALUE FROM KYC_PARAMETERS WHERE PARAM_KEY = ?1</query>
+        <query>SELECT PARAM_KEY,PARAM_VALUE,CREATION_DATE,UPDATED_DATE FROM KYC_PARAMETERS WHERE PARAM_KEY = ?1</query>
     </named-native-query>
 
     <named-native-query name="KycLoginHistoric.getCurrentSession"
