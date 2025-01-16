@@ -30,6 +30,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.Clock;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -146,7 +147,7 @@ public class UserAuthServiceTest {
                 .thenReturn(false);
 
         when(parameterService.getParameter(KYC_FAIL_LOGIN_ATTEMPTS))
-                .thenReturn(new KycParameter("KEY","3"));
+                .thenReturn(new KycParameter("KEY","3",new Date(),new Date()));
         when(kycMessages.getMessage(MSG_APP_006))
                 .thenReturn(new MessageData());
 
@@ -179,7 +180,7 @@ public class UserAuthServiceTest {
                 .thenReturn(false);
 
         when(parameterService.getParameter(KYC_FAIL_LOGIN_ATTEMPTS))
-                .thenReturn(new KycParameter("KEY","3"));
+                .thenReturn(new KycParameter("KEY","3",new Date(),new Date()));
         when(kycMessages.getMessage(MSG_APP_006))
                 .thenReturn(new MessageData());
 

@@ -109,7 +109,7 @@ public class SessionServiceTest {
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(3L).toInstant()));
 
         when(parameterService.getParameter(KYC_SESSION_TIMEOUT))
-                .thenReturn(new KycParameter("kyc","3"));
+                .thenReturn(new KycParameter("kyc","3",null,null));
         when(historicLoginService.getCurrentSession(any(SessionData.class)))
                 .thenReturn(Optional.of(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
@@ -134,7 +134,7 @@ public class SessionServiceTest {
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(1L).toInstant()));
 
         when(parameterService.getParameter(KYC_SESSION_TIMEOUT))
-                .thenReturn(new KycParameter("kyc","3"));
+                .thenReturn(new KycParameter("kyc","3",null,null));
         when(historicLoginService.getCurrentSession(any(SessionData.class)))
                 .thenReturn(Optional.of(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
@@ -159,7 +159,7 @@ public class SessionServiceTest {
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(4L).toInstant()));
 
         when(parameterService.getParameter(KYC_SESSION_TIMEOUT))
-                .thenReturn(new KycParameter("kyc","3"));
+                .thenReturn(new KycParameter("kyc","3",null,null));
         when(historicLoginService.getCurrentSession(any(SessionData.class)))
                 .thenReturn(Optional.of(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
@@ -178,7 +178,7 @@ public class SessionServiceTest {
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(14L).toInstant()));
 
         when(historicLoginService.getActiveSessions()).thenReturn(Collections.singletonList(kycLoginHistoric));
-        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3"));
+        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3",null,null));
         when(clock.instant()).thenReturn(NOW.toInstant());
         when(clock.getZone()).thenReturn(NOW.getZone());
 
@@ -194,7 +194,7 @@ public class SessionServiceTest {
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(1L).toInstant()));
 
         when(historicLoginService.getActiveSessions()).thenReturn(Collections.singletonList(kycLoginHistoric));
-        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3"));
+        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3",null,null));
         when(clock.instant()).thenReturn(NOW.toInstant());
         when(clock.getZone()).thenReturn(NOW.getZone());
 
@@ -224,7 +224,7 @@ public class SessionServiceTest {
         KycLoginHistoric kycLoginHistoric = new KycLoginHistoric();
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(1L).toInstant()));
 
-        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3"));
+        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3",null,null));
         when(historicLoginService.getCurrentSession(any(SessionData.class))).thenReturn(Optional.of(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
         when(clock.getZone()).thenReturn(NOW.getZone());
@@ -262,7 +262,7 @@ public class SessionServiceTest {
         KycLoginHistoric kycLoginHistoric = new KycLoginHistoric();
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(1L).toInstant()));
 
-        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3"));
+        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3",null,null));
         when(historicLoginService.getCurrentSession(any(SessionData.class))).thenReturn(Optional.of(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
         when(clock.getZone()).thenReturn(NOW.getZone());
@@ -292,7 +292,7 @@ public class SessionServiceTest {
         KycLoginHistoric kycLoginHistoric = new KycLoginHistoric();
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(1L).toInstant()));
 
-        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3"));
+        when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3",null,null));
         when(historicLoginService.getCurrentSessionOnChannel(1L,1)).thenReturn(Optional.of(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
         when(clock.getZone()).thenReturn(NOW.getZone());

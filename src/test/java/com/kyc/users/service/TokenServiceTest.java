@@ -49,7 +49,7 @@ public class TokenServiceTest {
         jwtData.setSubject("sub");
 
         when(parameterService.getParameter(KYC_SHARED_KEY))
-                .thenReturn(new KycParameter("key","12345678901234567890123456789012"));
+                .thenReturn(new KycParameter("key","12345678901234567890123456789012",null,null));
 
         String token = tokenService.getToken(jwtData);
         Assertions.assertNotNull(token);
@@ -64,7 +64,7 @@ public class TokenServiceTest {
             jwtData.setSubject("sub");
 
             when(parameterService.getParameter(KYC_SHARED_KEY))
-                    .thenReturn(new KycParameter("","bad"));
+                    .thenReturn(new KycParameter("","bad",null,null));
             when(kycMessages.getMessage(MSG_APP_010))
                     .thenReturn(new MessageData());
             tokenService.getToken(jwtData);
@@ -99,7 +99,7 @@ public class TokenServiceTest {
         jwtData.setAudience("aud");
 
         when(parameterService.getParameter(KYC_SHARED_KEY))
-                .thenReturn(new KycParameter("key","12345678901234567890123456789012"));
+                .thenReturn(new KycParameter("key","12345678901234567890123456789012",null,null));
 
         String token = tokenService.getToken(jwtData);
 
@@ -114,7 +114,7 @@ public class TokenServiceTest {
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
             when(parameterService.getParameter(KYC_SHARED_KEY))
-                    .thenReturn(new KycParameter("key","badKey"));
+                    .thenReturn(new KycParameter("key","badKey",null,null));
             when(kycMessages.getMessage(MSG_APP_002))
                     .thenReturn(new MessageData());
 
@@ -130,7 +130,7 @@ public class TokenServiceTest {
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
             when(parameterService.getParameter(KYC_SHARED_KEY))
-                    .thenReturn(new KycParameter("key","12345678901234567890123456789012"));
+                    .thenReturn(new KycParameter("key","12345678901234567890123456789012",null,null));
             when(kycMessages.getMessage(MSG_APP_002))
                     .thenReturn(new MessageData());
 
