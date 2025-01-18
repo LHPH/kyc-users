@@ -13,4 +13,6 @@ public interface KycCustomerRepository extends JpaRepository<KycCustomer,Long> {
 
     @Query(name = "KycCustomer.countHaveUser")
     long countHaveUser(Long idCustomer);
+
+    KycCustomer findByIdUser(Long idUser);
 }

@@ -10,11 +10,14 @@ import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.users.aspects.DatabaseHandlingException;
+import com.kyc.users.entity.KycCustomer;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
 import com.kyc.users.model.SessionData;
+import com.kyc.users.repositories.KycCustomerRepository;
+import com.kyc.users.repositories.KycExecutiveRepository;
 import com.kyc.users.repositories.KycUserExtendRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -54,6 +57,12 @@ public class UserAuthService {
 
     @Autowired
     private KycUserExtendRepository kycUserRepository;
+
+    @Autowired
+    private KycCustomerRepository kycCustomerRepository;
+
+    @Autowired
+    private KycExecutiveRepository kycExecutiveRepository;
 
     @Autowired
     private PasswordEncoderService passwordEncoderService;
@@ -122,13 +131,16 @@ public class UserAuthService {
                 LOGGER.info("Checking if the user does not have a current session in the channel");
                 checkNoCurrentSessionOnChannel(user,idChannel);
 
+                LOGGER.info("Retrieve User Info");
+                Long id = getExecutiveOrCustomerId(user);
+
                 LOGGER.info("The user pass all the validations, generating session");
                 sessionService.openSession(sessionData);
 
                 JWTData jwtData = new JWTData();
                 jwtData.setChannel(String.valueOf(idChannel));
-                jwtData.setIssuer(KYC_USERS);
-                jwtData.setSubject(String.valueOf(user.getId()));
+                jwtData.setIssuer(tokenAudience);
+                jwtData.setSubject(String.valueOf(id));
                 jwtData.setKey(sessionData.getSessionId());
                 jwtData.setAudience(tokenAudience);
                 jwtData.setRole(KycUserTypeEnum.getInstanceById(user.getUserType().getId()).name());
@@ -297,9 +309,15 @@ public class UserAuthService {
                     .inputData(user.getId())
                     .build();
         }
-
     }
 
+    private Long getExecutiveOrCustomerId(KycUserExtend user){
 
+        KycUserTypeEnum type = KycUserTypeEnum.getInstanceById(user.getUserType().getId());
 
+        if(KycUserTypeEnum.CUSTOMER.equals(type)){
+            return kycCustomerRepository.findByIdUser(user.getId()).getId();
+        }
+        return kycExecutiveRepository.findByIdUser(user.getId()).getId();
+    }
 }

@@ -11,11 +11,15 @@ import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.persistence.entity.KycUserType;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
+import com.kyc.users.entity.KycCustomer;
+import com.kyc.users.entity.KycExecutive;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
 import com.kyc.users.model.SessionData;
+import com.kyc.users.repositories.KycCustomerRepository;
+import com.kyc.users.repositories.KycExecutiveRepository;
 import com.kyc.users.repositories.KycUserExtendRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,6 +60,12 @@ public class UserAuthServiceTest {
 
     @Mock
     private KycUserExtendRepository kycUserRepository;
+
+    @Mock
+    private KycCustomerRepository kycCustomerRepository;
+
+    @Mock
+    private KycExecutiveRepository kycExecutiveRepository;
 
     @Mock
     private PasswordEncoderService passwordEncoderService;
@@ -119,6 +129,38 @@ public class UserAuthServiceTest {
                 .thenReturn(true);
         when(sessionService.hasActiveSessionOnChannel(anyLong(),anyInt()))
                 .thenReturn(false);
+        when(kycCustomerRepository.findByIdUser(anyLong()))
+                .thenReturn(new KycCustomer());
+        when(tokenService.getToken(any(JWTData.class)))
+                .thenReturn("token");
+
+        service.signInUser(req);
+        verify(sessionService,times(1)).openSession(any(SessionData.class));
+
+    }
+
+    @Test
+    public void signInUser_signingExecutiveUser_successfulSignIn(){
+
+        KycUserType userType = new KycUserType();
+        userType.setId(KycUserTypeEnum.EXECUTIVE.getId());
+
+        KycUserExtend user = new KycUserExtend();
+        user.setId(1L);
+        user.setUsername("user");
+        user.setSecret("user");
+        user.setActive(true);
+        user.setLocked(false);
+        user.setUserType(userType);
+
+        when(kycUserRepository.findByUsername(anyString()))
+                .thenReturn(Optional.of(user));
+        when(passwordEncoderService.matches(anyString(),anyString()))
+                .thenReturn(true);
+        when(sessionService.hasActiveSessionOnChannel(anyLong(),anyInt()))
+                .thenReturn(false);
+        when(kycExecutiveRepository.findByIdUser(anyLong()))
+                .thenReturn(new KycExecutive());
         when(tokenService.getToken(any(JWTData.class)))
                 .thenReturn("token");
 
