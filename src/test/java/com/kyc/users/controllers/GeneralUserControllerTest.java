@@ -73,7 +73,6 @@ public class GeneralUserControllerTest {
     public void sessionChecking_processRequest_returnResponse() throws Exception{
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(CHANNEL,"1");
         httpHeaders.add(HttpHeaders.AUTHORIZATION,"Bearer auth");
 
         given(delegate.sessionChecking(any(RequestData.class)))
@@ -91,7 +90,6 @@ public class GeneralUserControllerTest {
     public void logoutUser_processRequest_returnResponse() throws Exception{
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(CHANNEL,"1");
         httpHeaders.add(HttpHeaders.AUTHORIZATION,"Bearer auth");
 
         given(delegate.signOutUser(any(RequestData.class)))

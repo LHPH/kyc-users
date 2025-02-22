@@ -48,11 +48,9 @@ public class GeneralUserController {
 
 
     @PostMapping("/session-checking")
-    public ResponseEntity<ResponseData<JwtData>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-                                                                 @RequestHeader(CHANNEL) String channel){
+    public ResponseEntity<ResponseData<JwtData>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth){
 
         Map<String,Object> headers = new HashMap<>();
-        headers.put(CHANNEL,channel);
         headers.put(HttpHeaders.AUTHORIZATION, TokenUtil.extractTokenFromAuthHeader(auth));
 
         RequestData<Void> req = RequestData.<Void>builder()
@@ -63,11 +61,9 @@ public class GeneralUserController {
     }
 
     @PostMapping("/session-renewal")
-    public ResponseEntity<ResponseData<JwtData>> sessionRenewal(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-                                                                 @RequestHeader(CHANNEL) String channel){
+    public ResponseEntity<ResponseData<JwtData>> sessionRenewal(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth){
 
         Map<String,Object> headers = new HashMap<>();
-        headers.put(CHANNEL,channel);
         headers.put(HttpHeaders.AUTHORIZATION, TokenUtil.extractTokenFromAuthHeader(auth));
 
         RequestData<Void> req = RequestData.<Void>builder()
@@ -78,11 +74,9 @@ public class GeneralUserController {
     }
 
     @PostMapping("/sign-out")
-    public ResponseEntity<ResponseData<Void>> logoutUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-                                                         @RequestHeader(CHANNEL) String channel){
+    public ResponseEntity<ResponseData<Void>> logoutUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth){
 
         Map<String,Object> headers = new HashMap<>();
-        headers.put(CHANNEL,channel);
         headers.put(HttpHeaders.AUTHORIZATION, TokenUtil.extractTokenFromAuthHeader(auth));
 
         RequestData<Void> req = RequestData.<Void>builder()
