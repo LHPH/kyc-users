@@ -1,5 +1,6 @@
 package com.kyc.users.controllers;
 
+import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
@@ -47,8 +48,8 @@ public class GeneralUserController {
 
 
     @PostMapping("/session-checking")
-    public ResponseEntity<ResponseData<TokenMetaData>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
-                                                                       @RequestHeader(CHANNEL) String channel){
+    public ResponseEntity<ResponseData<JwtData>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+                                                                 @RequestHeader(CHANNEL) String channel){
 
         Map<String,Object> headers = new HashMap<>();
         headers.put(CHANNEL,channel);
@@ -59,6 +60,21 @@ public class GeneralUserController {
                 .build();
 
         return userDelegate.sessionChecking(req);
+    }
+
+    @PostMapping("/session-renewal")
+    public ResponseEntity<ResponseData<JwtData>> sessionRenewal(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+                                                                 @RequestHeader(CHANNEL) String channel){
+
+        Map<String,Object> headers = new HashMap<>();
+        headers.put(CHANNEL,channel);
+        headers.put(HttpHeaders.AUTHORIZATION, TokenUtil.extractTokenFromAuthHeader(auth));
+
+        RequestData<Void> req = RequestData.<Void>builder()
+                .headers(headers)
+                .build();
+
+        return userDelegate.sessionRenewal(req);
     }
 
     @PostMapping("/sign-out")

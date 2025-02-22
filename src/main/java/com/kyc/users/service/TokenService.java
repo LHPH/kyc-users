@@ -1,7 +1,7 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.core.model.jwt.JWTData;
+import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.util.TokenUtil;
 import com.nimbusds.jose.JOSEException;
@@ -31,14 +31,14 @@ public class TokenService {
     @Autowired
     private KycMessages kycMessages;
 
-    public String getToken(JWTData jwtData){
+    public String getToken(JwtData jwtData){
 
         try{
             LOGGER.info("Generating token");
             String secret = parameterService.getParameter(KYC_SHARED_KEY).getValue();
             return TokenUtil.getToken(jwtData, JWSAlgorithm.HS256,secret.getBytes(StandardCharsets.UTF_8));
         }
-        catch(JOSEException | DataAccessException ex){
+        catch(JOSEException | DataAccessException | ParseException ex){
 
             throw KycRestException.builderRestException()
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
@@ -49,7 +49,7 @@ public class TokenService {
         }
     }
 
-    public JWTData readToken(String token){
+    public JwtData readToken(String token){
 
         try{
             LOGGER.info("Reading token");

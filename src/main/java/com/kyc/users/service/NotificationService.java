@@ -1,7 +1,7 @@
 package com.kyc.users.service;
 
 import com.kyc.core.model.MessageData;
-import com.kyc.core.model.jwt.JWTData;
+import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.notifications.NotificationData;
 import com.kyc.core.util.DateUtil;
 import com.kyc.users.entity.KycUserExtend;
@@ -57,18 +57,22 @@ public class NotificationService {
 
                 KycUserExtend user = opUser.get();
 
-                JWTData jwtData = new JWTData();
-                jwtData.setChannel(String.valueOf(idChannel));
-                jwtData.setIssuer(KYC_USERS);
-                jwtData.setSubject(String.valueOf(user.getId()));
-                jwtData.setAudience(tokenAudience);
-                jwtData.setExpirationTime(DateUtil.localDateTimeToDate(LocalDateTime.now(clock).plusMinutes(5)));
+                LocalDateTime localDateTime = LocalDateTime.now(clock);
+                JwtData jwtData = JwtData.builder()
+                        .channel(String.valueOf(idChannel))
+                        .sub(KYC_USERS)
+                        .role("SYSTEM")
+                        .user(user.getId())
+                        .addAud(tokenAudience)
+                        .iat(DateUtil.localDateTimeToDate(localDateTime).getTime())
+                        .exp(DateUtil.localDateTimeToDate(localDateTime.plusMinutes(5)).getTime())
+                        .build();
 
                 String token = tokenService.getToken(jwtData);
 
                 Map<String,Object> headers = new HashMap<>();
                 headers.put("Authorization",token);
-                headers.put("kyc-customer-id-receiver", customerId);
+                headers.put("recipient", customerId);
                 headers.put(CHANNEL,idChannel);
 
                 NotificationData notificationData = new NotificationData();

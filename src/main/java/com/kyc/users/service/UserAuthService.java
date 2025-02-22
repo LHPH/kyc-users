@@ -1,7 +1,7 @@
 package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
-import com.kyc.core.model.jwt.JWTData;
+import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
@@ -9,6 +9,7 @@ import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
+import com.kyc.core.util.DateUtil;
 import com.kyc.users.aspects.DatabaseHandlingException;
 import com.kyc.users.entity.KycCustomer;
 import com.kyc.users.entity.KycLoginUserInfo;
@@ -31,6 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -44,6 +48,7 @@ import static com.kyc.users.constants.AppConstants.CHANNEL;
 import static com.kyc.users.constants.AppConstants.IP;
 import static com.kyc.users.constants.AppConstants.KYC_FAIL_LOGIN_ATTEMPTS;
 import static com.kyc.users.constants.AppConstants.KYC_USERS;
+import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 import static com.kyc.users.constants.AppConstants.MSG_APP_006;
 import static com.kyc.users.constants.AppConstants.MSG_APP_007;
 import static com.kyc.users.constants.AppConstants.MSG_APP_008;
@@ -137,13 +142,16 @@ public class UserAuthService {
                 LOGGER.info("The user pass all the validations, generating session");
                 sessionService.openSession(sessionData);
 
-                JWTData jwtData = new JWTData();
-                jwtData.setChannel(String.valueOf(idChannel));
-                jwtData.setIssuer(tokenAudience);
-                jwtData.setSubject(String.valueOf(id));
-                jwtData.setKey(sessionData.getSessionId());
-                jwtData.setAudience(tokenAudience);
-                jwtData.setRole(KycUserTypeEnum.getInstanceById(user.getUserType().getId()).name());
+                JwtData jwtData = JwtData.builder()
+                        .iss(tokenAudience)
+                        .addAud(tokenAudience)
+                        .user(user.getId())
+                        .role(KycUserTypeEnum.getInstanceById(user.getUserType().getId()).name())
+                        .channel(String.valueOf(idChannel))
+                        .owner(id)
+                        .sub(sessionData.getSessionId())
+                        .addition("sess-init",sessionData.getNewDate().getTime())
+                        .build();
 
                 LOGGER.info("Generating and returning access token");
                 return ResponseData.of(new TokenData(tokenService.getToken(jwtData)));
@@ -168,8 +176,8 @@ public class UserAuthService {
         String token = Objects.toString(map.get(HttpHeaders.AUTHORIZATION));
 
         LOGGER.info("Reading and validating access token");
-        JWTData data = tokenService.readToken(token);
-        String key = data.getKey();
+        JwtData data = tokenService.readToken(token);
+        String key = data.getSub();
 
         LOGGER.info("Retrieving session id from the token");
         SessionData sessionData = SessionData.builder()
@@ -185,15 +193,15 @@ public class UserAuthService {
     }
 
     @Transactional
-    public ResponseData<TokenMetaData> renewSession(RequestData<Void> req){
+    public ResponseData<JwtData> renewSession(RequestData<Void> req){
 
         LOGGER.info("Starting process to renew the user session");
         Map<String,Object> map = req.getHeaders();
         String token = Objects.toString(map.get(HttpHeaders.AUTHORIZATION));
 
         LOGGER.info("Reading and validating access token");
-        JWTData data = tokenService.readToken(token);
-        String key = data.getKey();
+        JwtData data = tokenService.readToken(token);
+        String key = data.getSub();
 
         LOGGER.info("Retrieving session id");
         SessionData sessionData = SessionData.builder()
@@ -206,13 +214,12 @@ public class UserAuthService {
 
         if(isRenewed){
 
-            TokenMetaData tokenMetaData = TokenMetaData.builder()
-                    .originChannel(data.getChannel())
-                    .sub(data.getSubject())
-                    .role(data.getRole())
+            JwtData newJwtData = data.toBuilder()
+                    .addition("sess-renew",sessionData.getNewDate().getTime())
                     .build();
+
             LOGGER.info("The session {} was renewed",key);
-            return ResponseData.of(tokenMetaData);
+            return ResponseData.of(newJwtData);
         }
         else{
 
@@ -220,6 +227,25 @@ public class UserAuthService {
             sessionService.closeSession(sessionData);
             return ResponseData.of(kycMessages.getMessage(MSG_APP_011),HttpStatus.FORBIDDEN);
         }
+    }
+
+    public ResponseData<JwtData> checkingSession(RequestData<Void> req){
+
+        LOGGER.info("Starting process to check the user session");
+        Map<String,Object> map = req.getHeaders();
+        String token = Objects.toString(map.get(HttpHeaders.AUTHORIZATION));
+
+        LOGGER.info("Reading and validating access token");
+        JwtData data = tokenService.readToken(token);
+
+        if(sessionService.hasActiveSessionOnChannel(data.getUser(),Integer.parseInt(data.getChannel()))){
+
+            LOGGER.info("The token session is still valid");
+            return ResponseData.of(data);
+        }
+
+        LOGGER.info("The token session is not valid");
+        return ResponseData.of(kycMessages.getMessage(MSG_APP_003),HttpStatus.UNAUTHORIZED);
     }
 
     private ResponseData<TokenData> failLoginActions(KycUserExtend user){

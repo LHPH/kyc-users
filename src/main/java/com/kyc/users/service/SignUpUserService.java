@@ -74,7 +74,7 @@ public class SignUpUserService {
 
         LOGGER.info("Checking if the username already exists en database");
         Optional<KycUserExtend> opUser = kycUserRepository.findByUsername(customerData.getUsername());
-        if(!opUser.isPresent()){
+        if(opUser.isEmpty()){
 
             LOGGER.info("Checking if the user already has a user");
             if(!verifiedIfCustomerHasAlreadyUser(customerData.getCustomerNumber())){

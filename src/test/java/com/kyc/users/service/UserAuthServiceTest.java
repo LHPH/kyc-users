@@ -2,7 +2,7 @@ package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.MessageData;
-import com.kyc.core.model.jwt.JWTData;
+import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.jwt.TokenData;
 import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
@@ -131,7 +131,7 @@ public class UserAuthServiceTest {
                 .thenReturn(false);
         when(kycCustomerRepository.findByIdUser(anyLong()))
                 .thenReturn(new KycCustomer());
-        when(tokenService.getToken(any(JWTData.class)))
+        when(tokenService.getToken(any(JwtData.class)))
                 .thenReturn("token");
 
         service.signInUser(req);
@@ -161,7 +161,7 @@ public class UserAuthServiceTest {
                 .thenReturn(false);
         when(kycExecutiveRepository.findByIdUser(anyLong()))
                 .thenReturn(new KycExecutive());
-        when(tokenService.getToken(any(JWTData.class)))
+        when(tokenService.getToken(any(JwtData.class)))
                 .thenReturn("token");
 
         service.signInUser(req);
@@ -351,7 +351,7 @@ public class UserAuthServiceTest {
                 .build();
 
         when(tokenService.readToken(anyString()))
-                .thenReturn(new JWTData());
+                .thenReturn(new JwtData());
 
         service.signOutUser(req);
         verify(sessionService,times(1)).closeSession(any(SessionData.class));
@@ -366,11 +366,11 @@ public class UserAuthServiceTest {
                 .build();
 
         when(tokenService.readToken(anyString()))
-                .thenReturn(new JWTData());
+                .thenReturn(new JwtData());
         when(sessionService.renewSession(any(SessionData.class)))
                 .thenReturn(true);
 
-        ResponseData<TokenMetaData> response = service.renewSession(req);
+        ResponseData<JwtData> response = service.renewSession(req);
         Assertions.assertEquals(HttpStatus.OK,response.getHttpStatus());
     }
 
@@ -382,13 +382,13 @@ public class UserAuthServiceTest {
                 .build();
 
         when(tokenService.readToken(anyString()))
-                .thenReturn(new JWTData());
+                .thenReturn(new JwtData());
         when(sessionService.renewSession(any(SessionData.class)))
                 .thenReturn(false);
         when(kycMessages.getMessage(MSG_APP_011))
                 .thenReturn(new MessageData());
 
-        ResponseData<TokenMetaData> response = service.renewSession(req);
+        ResponseData<JwtData> response = service.renewSession(req);
         Assertions.assertEquals(HttpStatus.FORBIDDEN,response.getHttpStatus());
     }
 }

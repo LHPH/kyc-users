@@ -2,7 +2,7 @@ package com.kyc.users.service;
 
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.MessageData;
-import com.kyc.core.model.jwt.JWTData;
+import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.nimbusds.jose.JOSEException;
@@ -18,6 +18,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 import java.text.ParseException;
+import java.util.Collections;
 
 import static com.kyc.users.constants.AppConstants.KYC_SHARED_KEY;
 import static com.kyc.users.constants.AppConstants.MSG_APP_002;
@@ -45,8 +46,8 @@ public class TokenServiceTest {
     @Test
     public void getToken_generatingToken_returnToken(){
 
-        JWTData jwtData = new JWTData();
-        jwtData.setSubject("sub");
+        JwtData jwtData = new JwtData();
+        jwtData.setSub("sub");
 
         when(parameterService.getParameter(KYC_SHARED_KEY))
                 .thenReturn(new KycParameter("key","12345678901234567890123456789012",null,null));
@@ -60,8 +61,8 @@ public class TokenServiceTest {
 
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
-            JWTData jwtData = new JWTData();
-            jwtData.setSubject("sub");
+            JwtData jwtData = new JwtData();
+            jwtData.setSub("sub");
 
             when(parameterService.getParameter(KYC_SHARED_KEY))
                     .thenReturn(new KycParameter("","bad",null,null));
@@ -77,8 +78,8 @@ public class TokenServiceTest {
 
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
-            JWTData jwtData = new JWTData();
-            jwtData.setSubject("sub");
+            JwtData jwtData = new JwtData();
+            jwtData.setSub("sub");
 
             when(parameterService.getParameter(KYC_SHARED_KEY))
                     .thenThrow(new InvalidDataAccessResourceUsageException("test error db"));
@@ -92,20 +93,19 @@ public class TokenServiceTest {
     @Test
     public void readToken_retrievingDataFromToken_returnData(){
 
-        JWTData jwtData = new JWTData();
-        jwtData.setSubject("sub");
+        JwtData jwtData = new JwtData();
+        jwtData.setSub("sub");
         jwtData.setChannel("channel");
-        jwtData.setKey("key");
-        jwtData.setAudience("aud");
+        jwtData.setAud(Collections.singletonList("aud"));
 
         when(parameterService.getParameter(KYC_SHARED_KEY))
                 .thenReturn(new KycParameter("key","12345678901234567890123456789012",null,null));
 
         String token = tokenService.getToken(jwtData);
 
-        JWTData result = tokenService.readToken(token);
+        JwtData result = tokenService.readToken(token);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(jwtData.getKey(),result.getKey());
+        Assertions.assertEquals(jwtData.getSub(),result.getSub());
     }
 
     @Test

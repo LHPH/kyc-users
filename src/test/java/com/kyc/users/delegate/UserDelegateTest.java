@@ -55,12 +55,12 @@ public class UserDelegateTest {
     }
 
     @Test
-    public void sessionChecking_passRequest_returnResponse(){
+    public void sessionRenewal_passRequest_returnResponse(){
 
         when(userAuthService.renewSession(any(RequestData.class)))
                 .thenReturn(ResponseData.of(null));
 
-        delegate.sessionChecking(RequestData.<Void>builder().build());
+        delegate.sessionRenewal(RequestData.<Void>builder().build());
 
         verify(userAuthService,times(1)).renewSession(any(RequestData.class));
     }
