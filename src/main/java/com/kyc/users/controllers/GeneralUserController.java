@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.kyc.users.constants.AppConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.CHANNEL;
 import static com.kyc.users.constants.AppConstants.IP;
 
 @RestController
@@ -47,7 +48,7 @@ public class GeneralUserController {
 
 
 
-    @PostMapping("/session-checking")
+    @GetMapping("/session-checking")
     public ResponseEntity<ResponseData<JwtData>> sessionChecking(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth){
 
         Map<String,Object> headers = new HashMap<>();

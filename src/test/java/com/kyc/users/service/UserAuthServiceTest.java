@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.kyc.users.constants.AppConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.CHANNEL;
 import static com.kyc.users.constants.AppConstants.IP;
 import static com.kyc.users.constants.AppConstants.KYC_FAIL_LOGIN_ATTEMPTS;
 import static com.kyc.users.constants.AppConstants.MSG_APP_006;

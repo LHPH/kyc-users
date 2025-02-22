@@ -28,7 +28,7 @@ import org.springframework.http.HttpStatus;
 import java.util.Collections;
 import java.util.Optional;
 
-import static com.kyc.users.constants.AppConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.CHANNEL;
 import static com.kyc.users.constants.AppConstants.MSG_APP_004;
 import static com.kyc.users.constants.AppConstants.MSG_APP_005;
 import static com.kyc.users.constants.AppConstants.MSG_APP_010;

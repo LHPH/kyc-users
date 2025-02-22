@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.kyc.users.constants.AppConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.ID_ISSUER;
+import static com.kyc.core.constants.GeneralConstants.ID_RECIPIENT;
 import static com.kyc.users.constants.AppConstants.KYC_USERS;
 
 @Service
@@ -57,28 +59,14 @@ public class NotificationService {
 
                 KycUserExtend user = opUser.get();
 
-                LocalDateTime localDateTime = LocalDateTime.now(clock);
-                JwtData jwtData = JwtData.builder()
-                        .channel(String.valueOf(idChannel))
-                        .sub(KYC_USERS)
-                        .role("SYSTEM")
-                        .user(user.getId())
-                        .addAud(tokenAudience)
-                        .iat(DateUtil.localDateTimeToDate(localDateTime).getTime())
-                        .exp(DateUtil.localDateTimeToDate(localDateTime.plusMinutes(5)).getTime())
-                        .build();
-
-                String token = tokenService.getToken(jwtData);
-
                 Map<String,Object> headers = new HashMap<>();
-                headers.put("Authorization",token);
-                headers.put("recipient", customerId);
+                headers.put(ID_ISSUER,user.getId());
+                headers.put(ID_RECIPIENT, customerId);
                 headers.put(CHANNEL,idChannel);
 
                 NotificationData notificationData = new NotificationData();
                 notificationData.setMessage(messageData.getMessage());
                 notificationData.setEvent(messageData.getType().name());
-                notificationData.setDate(new Date());
                 LOGGER.info("Send Notification");
                 rabbitTemplate.convertAndSend(EXCHANGE_CUSTOMERS,ROUTING_KEY,notificationData,m ->{
 

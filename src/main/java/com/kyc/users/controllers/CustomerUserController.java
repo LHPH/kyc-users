@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.kyc.users.constants.AppConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.CHANNEL;
 
 @RestController
 @Validated

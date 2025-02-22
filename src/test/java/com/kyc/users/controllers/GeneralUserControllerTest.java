@@ -18,10 +18,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.kyc.users.constants.AppConstants.CHANNEL;
+import static com.kyc.core.constants.GeneralConstants.CHANNEL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -78,7 +79,7 @@ public class GeneralUserControllerTest {
         given(delegate.sessionChecking(any(RequestData.class)))
                 .willReturn(TestsUtil.getResponseTest(null));
 
-        mockMvc.perform(post("/user/session-checking")
+        mockMvc.perform(get("/user/session-checking")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(httpHeaders))
                 .andDo(print())

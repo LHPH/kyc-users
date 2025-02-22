@@ -72,10 +72,6 @@ public class NotificationServiceTest {
         user.setId(3L);
         when(kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS))
                 .thenReturn(Optional.of(user));
-        when(tokenService.getToken(any(JwtData.class)))
-                .thenReturn("token");
-        when(clock.getZone()).thenReturn(NOW.getZone());
-        when(clock.instant()).thenReturn(NOW.toInstant());
 
         notificationService.sendNotificationTo(1,1L,new MessageData("CODE","MESSAGE", MessageType.INFO));
         verify(rabbitTemplate,times(1))
@@ -100,10 +96,6 @@ public class NotificationServiceTest {
         user.setId(3L);
         when(kycUserRepository.findByUsernameAndActiveTrue(KYC_USERS))
                 .thenReturn(Optional.of(user));
-        when(tokenService.getToken(any(JwtData.class)))
-                .thenReturn("token");
-        when(clock.getZone()).thenReturn(NOW.getZone());
-        when(clock.instant()).thenReturn(NOW.toInstant());
         doThrow(new AmqpException("amqp error")).when(rabbitTemplate)
                 .convertAndSend(anyString(),anyString(),any(NotificationData.class),any(MessagePostProcessor.class));
 
