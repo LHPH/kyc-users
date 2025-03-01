@@ -184,7 +184,7 @@ public class SessionServiceTest {
         when(clock.getZone()).thenReturn(NOW.getZone());
 
         sessionService.closeIdleActiveSessions();
-        verify(historicLoginService,times(1)).addHistoricLogoutData(any(SessionData.class));
+        verify(historicLoginService,times(1)).forceHistoricLogoutData(any(KycLoginHistoric.class));
     }
 
     @Test
