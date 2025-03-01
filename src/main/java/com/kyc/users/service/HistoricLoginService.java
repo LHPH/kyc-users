@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,16 +45,20 @@ public class HistoricLoginService {
         if(opHistoricLogin.isPresent()){
 
             KycLoginHistoric loginHistoric = opHistoricLogin.get();
-
-            String sessionId = loginHistoric.getIdSession();
-            Long idUser = loginHistoric.getUser().getId();
-
-            loginHistoric.setActiveSession(false);
-            loginHistoric.setDateLogout(sessionData.getNewDate());
-            LOGGER.info("Canceling the session {} in database",loginHistoric.getIdSession());
-            kycLoginHistoricRepository.save(loginHistoric);
-            LOGGER.info("The session {} was inactivated for the user {}",sessionId,idUser);
+            forceHistoricLogoutData(loginHistoric);
         }
+    }
+
+    public void forceHistoricLogoutData(KycLoginHistoric loginHistoric){
+
+        String sessionId = loginHistoric.getIdSession();
+        Long idUser = loginHistoric.getUser().getId();
+
+        loginHistoric.setActiveSession(false);
+        loginHistoric.setDateLogout(new Date());
+        LOGGER.info("Force logout in session {} in database",loginHistoric.getIdSession());
+        kycLoginHistoricRepository.save(loginHistoric);
+        LOGGER.info("The session {} was inactivated for the user {}",sessionId,idUser);
     }
 
     public void refreshCheckpoint(SessionData sessionData){
@@ -78,7 +83,7 @@ public class HistoricLoginService {
         return kycLoginHistoricRepository.getCurrentSession(sessionData.getSessionId());
     }
 
-    public Optional<KycLoginHistoric> getCurrentSessionOnChannel(Long idUser, Integer idChannel){
+    public List<KycLoginHistoric> getCurrentSessionOnChannel(Long idUser, Integer idChannel){
         LOGGER.info("Retrieving the current session in database through the channel {} and user id {}",idUser,idChannel);
         return kycLoginHistoricRepository.getCurrentSessionOnChannel(idUser,idChannel);
     }

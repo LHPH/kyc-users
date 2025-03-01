@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -293,7 +294,7 @@ public class SessionServiceTest {
         kycLoginHistoric.setDateCheckpoint(Date.from(NOW.minusMinutes(1L).toInstant()));
 
         when(parameterService.getParameter(KYC_SESSION_TIMEOUT)).thenReturn(new KycParameter("kyc","3",null,null));
-        when(historicLoginService.getCurrentSessionOnChannel(1L,1)).thenReturn(Optional.of(kycLoginHistoric));
+        when(historicLoginService.getCurrentSessionOnChannel(1L,1)).thenReturn(Collections.singletonList(kycLoginHistoric));
         when(clock.instant()).thenReturn(NOW.toInstant());
         when(clock.getZone()).thenReturn(NOW.getZone());
 
@@ -303,7 +304,7 @@ public class SessionServiceTest {
     @Test
     public void hasActiveSessionOnChannel_NoSessionActiveOnTheChannel_returnFalse(){
 
-        when(historicLoginService.getCurrentSessionOnChannel(1L,1)).thenReturn(Optional.empty());
+        when(historicLoginService.getCurrentSessionOnChannel(1L,1)).thenReturn(new ArrayList<>());
 
         Assertions.assertFalse(sessionService.hasActiveSessionOnChannel(1L,1));
     }

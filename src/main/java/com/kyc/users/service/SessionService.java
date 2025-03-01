@@ -89,15 +89,10 @@ public class SessionService {
         LOGGER.info("Retrieving active sessions");
         List<KycLoginHistoric> idleSessions = historicLoginService.getActiveSessions()
                 .stream().filter( e -> !checkTimeCurrentSession(e))
-                .collect(Collectors.toList());
+                .toList();
         LOGGER.info("There are {} idle sessions",idleSessions.size());
         idleSessions.forEach(idle -> {
-
-            SessionData sessionData = SessionData.builder()
-                    .sessionId(idle.getIdSession())
-                    .newDate(new Date())
-                    .build();
-            historicLoginService.addHistoricLogoutData(sessionData);
+            historicLoginService.forceHistoricLogoutData(idle);
         });
         LOGGER.info("Finish the auto close idle sessions");
     }
@@ -125,9 +120,25 @@ public class SessionService {
     @DatabaseHandlingException
     public boolean hasActiveSessionOnChannel(Long idUser, Integer idChannel){
 
-        Optional<KycLoginHistoric> opCurrentSession = historicLoginService.getCurrentSessionOnChannel(idUser,idChannel);
-        return opCurrentSession.filter(this::checkTimeCurrentSession)
-                .isPresent();
+        List<KycLoginHistoric> opCurrentSessions = historicLoginService.getCurrentSessionOnChannel(idUser,idChannel);
+
+        boolean active = false;
+        if(!opCurrentSessions.isEmpty()){
+
+            if(checkTimeCurrentSession(opCurrentSessions.get(0))){
+
+                active = true;
+                opCurrentSessions.stream().skip(1).forEachOrdered(element -> {
+                    historicLoginService.forceHistoricLogoutData(element);
+                });
+            }
+            else{
+                opCurrentSessions.forEach(element -> {
+                    historicLoginService.forceHistoricLogoutData(element);
+                });
+            }
+        }
+        return active;
     }
 
     private boolean checkTimeCurrentSession(KycLoginHistoric currentSession){

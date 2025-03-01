@@ -14,7 +14,7 @@ public interface KycLoginHistoricRepository extends JpaRepository<KycLoginHistor
     Optional<KycLoginHistoric> getCurrentSession(String sessionId);
 
     @Query(nativeQuery = true,name="KycLoginHistoric.getCurrentSessionOnChannel")
-    Optional<KycLoginHistoric> getCurrentSessionOnChannel(Long idUser, Integer idChannel);
+    List<KycLoginHistoric> getCurrentSessionOnChannel(Long idUser, Integer idChannel);
 
     @Query(nativeQuery = true, name = "KycLoginHistoric.getActiveSessions")
     List<KycLoginHistoric> getActiveSessions();

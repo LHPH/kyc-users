@@ -26,6 +26,7 @@
             FROM KYC_LOGIN_HISTORIC WHERE ID_USER = ?1
             AND ID_CHANNEL = ?2
             AND ACTIVE_SESSION = true
+            ORDER BY ID DESC
         </query>
     </named-native-query>
 
