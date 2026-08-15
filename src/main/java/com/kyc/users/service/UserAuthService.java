@@ -3,15 +3,12 @@ package com.kyc.users.service;
 import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.jwt.TokenData;
-import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
-import com.kyc.core.util.DateUtil;
 import com.kyc.users.aspects.DatabaseHandlingException;
-import com.kyc.users.entity.KycCustomer;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
@@ -32,9 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoField;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -47,7 +41,6 @@ import java.util.UUID;
 import static com.kyc.core.constants.GeneralConstants.CHANNEL;
 import static com.kyc.users.constants.AppConstants.IP;
 import static com.kyc.users.constants.AppConstants.KYC_FAIL_LOGIN_ATTEMPTS;
-import static com.kyc.users.constants.AppConstants.KYC_USERS;
 import static com.kyc.users.constants.AppConstants.MSG_APP_003;
 import static com.kyc.users.constants.AppConstants.MSG_APP_006;
 import static com.kyc.users.constants.AppConstants.MSG_APP_007;
@@ -150,7 +143,7 @@ public class UserAuthService {
                         .channel(String.valueOf(idChannel))
                         .owner(id)
                         .sub(sessionData.getSessionId())
-                        .addition("sess-init",sessionData.getNewDate().getTime())
+                        .additions(Map.of("sess-init",sessionData.getNewDate().getTime()))
                         .build();
 
                 LOGGER.info("Generating and returning access token");
@@ -215,7 +208,7 @@ public class UserAuthService {
         if(isRenewed){
 
             JwtData newJwtData = data.toBuilder()
-                    .addition("sess-renew",sessionData.getNewDate().getTime())
+                    .additions(Map.of("sess-renew",sessionData.getNewDate().getTime()))
                     .build();
 
             LOGGER.info("The session {} was renewed",key);

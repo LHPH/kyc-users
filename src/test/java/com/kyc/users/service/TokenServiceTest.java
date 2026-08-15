@@ -7,12 +7,10 @@ import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.nimbusds.jose.JOSEException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
@@ -36,12 +34,6 @@ public class TokenServiceTest {
 
     @InjectMocks
     private TokenService tokenService;
-
-    @BeforeAll
-    public static void setUp(){
-
-        MockitoAnnotations.openMocks(TokenServiceTest.class);
-    }
 
     @Test
     public void getToken_generatingToken_returnToken(){
@@ -70,7 +62,7 @@ public class TokenServiceTest {
                     .thenReturn(new MessageData());
             tokenService.getToken(jwtData);
         });
-        Assertions.assertTrue(ex.getException() instanceof JOSEException);
+        Assertions.assertInstanceOf(JOSEException.class, ex.getException());
     }
 
     @Test
@@ -87,7 +79,7 @@ public class TokenServiceTest {
                     .thenReturn(new MessageData());
             tokenService.getToken(jwtData);
         });
-        Assertions.assertTrue(ex.getException() instanceof DataAccessException);
+        Assertions.assertInstanceOf(DataAccessException.class, ex.getException());
     }
 
     @Test
@@ -121,7 +113,7 @@ public class TokenServiceTest {
             tokenService.readToken("someToken");
 
         });
-        Assertions.assertTrue(ex.getException() instanceof ParseException);
+        Assertions.assertInstanceOf(ParseException.class, ex.getException());
     }
 
     @Test
@@ -137,7 +129,7 @@ public class TokenServiceTest {
             tokenService.readToken("badToken");
 
         });
-        Assertions.assertTrue(ex.getException() instanceof ParseException);
+        Assertions.assertInstanceOf(ParseException.class, ex.getException());
     }
 
     @Test
@@ -152,7 +144,7 @@ public class TokenServiceTest {
 
             tokenService.readToken("someToken");
         });
-        Assertions.assertTrue(ex.getException() instanceof DataAccessException);
+        Assertions.assertInstanceOf(DataAccessException.class, ex.getException());
     }
 
 }

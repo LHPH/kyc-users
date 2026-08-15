@@ -4,7 +4,6 @@ import com.kyc.core.exception.KycRestException;
 import com.kyc.core.model.MessageData;
 import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.jwt.TokenData;
-import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.core.persistence.entity.KycParameter;
@@ -22,15 +21,14 @@ import com.kyc.users.repositories.KycCustomerRepository;
 import com.kyc.users.repositories.KycExecutiveRepository;
 import com.kyc.users.repositories.KycUserExtendRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Clock;
 import java.util.Collections;
@@ -90,11 +88,6 @@ public class UserAuthServiceTest {
 
     private RequestData<CredentialData> req;
 
-    @BeforeAll
-    public static void setUp(){
-        MockitoAnnotations.openMocks(UserAuthServiceTest.class);
-    }
-
     @BeforeEach
     public void init(){
 
@@ -107,6 +100,8 @@ public class UserAuthServiceTest {
                 .headers(headers)
                 .body(credentialData)
                 .build();
+
+        ReflectionTestUtils.setField(service,"tokenAudience","http://localhost:8080");
     }
 
     @Test

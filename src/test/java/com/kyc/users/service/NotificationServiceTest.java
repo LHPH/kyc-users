@@ -2,7 +2,6 @@ package com.kyc.users.service;
 
 import com.kyc.core.enums.MessageType;
 import com.kyc.core.model.MessageData;
-import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.notifications.NotificationData;
 import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.repositories.KycUserExtendRepository;

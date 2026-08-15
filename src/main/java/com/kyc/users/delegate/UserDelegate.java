@@ -2,7 +2,6 @@ package com.kyc.users.delegate;
 
 import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.jwt.TokenData;
-import com.kyc.core.model.jwt.TokenMetaData;
 import com.kyc.core.model.web.RequestData;
 import com.kyc.core.model.web.ResponseData;
 import com.kyc.users.model.CredentialData;

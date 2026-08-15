@@ -21,8 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.passay.FailureValidationResult;
 import org.passay.PasswordData;
-import org.passay.RuleResult;
+import org.passay.SuccessValidationResult;
+import org.passay.ValidationResult;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
@@ -76,8 +78,7 @@ public class SignUpUserServiceTest {
     @Test
     public void signUpUser_registerNewUser_successfulRegistration(){
 
-        RuleResult ruleResult = new RuleResult();
-        ruleResult.setValid(true);
+        ValidationResult ruleResult = new SuccessValidationResult();
 
         KycUserExtend kycUser = new KycUserExtend();
         kycUser.setId(1L);
@@ -112,8 +113,7 @@ public class SignUpUserServiceTest {
 
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
-            RuleResult ruleResult = new RuleResult();
-            ruleResult.setValid(true);
+            ValidationResult ruleResult = new SuccessValidationResult();
 
             KycUserExtend kycUser = new KycUserExtend();
             kycUser.setId(1L);
@@ -141,8 +141,7 @@ public class SignUpUserServiceTest {
 
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
-            RuleResult ruleResult = new RuleResult();
-            ruleResult.setValid(false);
+            ValidationResult ruleResult = new FailureValidationResult();
 
             when(passwordFormatValidationService.validatePassword(any(PasswordData.class)))
                     .thenReturn(ruleResult);
@@ -165,8 +164,7 @@ public class SignUpUserServiceTest {
 
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
-            RuleResult ruleResult = new RuleResult();
-            ruleResult.setValid(true);
+            ValidationResult ruleResult = new SuccessValidationResult();
 
             when(kycUserRepository.findByUsername(anyString()))
                     .thenReturn(Optional.empty());
@@ -193,8 +191,7 @@ public class SignUpUserServiceTest {
 
         KycRestException ex = Assertions.assertThrows(KycRestException.class,()->{
 
-            RuleResult ruleResult = new RuleResult();
-            ruleResult.setValid(true);
+            ValidationResult ruleResult = new SuccessValidationResult();
 
             KycUserExtend kycUser = new KycUserExtend();
             kycUser.setId(1L);

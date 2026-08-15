@@ -1,9 +1,7 @@
 package com.kyc.users.service;
 
 import com.kyc.core.model.MessageData;
-import com.kyc.core.model.jwt.JwtData;
 import com.kyc.core.model.notifications.NotificationData;
-import com.kyc.core.util.DateUtil;
 import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.repositories.KycUserExtendRepository;
 import org.slf4j.Logger;
@@ -16,8 +14,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

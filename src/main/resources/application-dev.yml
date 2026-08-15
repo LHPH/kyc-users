@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:6000/kyc_database
+    url: jdbc:postgresql://localhost:5432/kyc_database
     username: kyc_user
     password: kyc_pass
     hikari:

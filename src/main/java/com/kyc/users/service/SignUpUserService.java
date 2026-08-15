@@ -16,7 +16,7 @@ import com.kyc.users.repositories.KycCustomerRepository;
 import com.kyc.users.repositories.KycUserExtendRepository;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.passay.PasswordData;
-import org.passay.RuleResult;
+import org.passay.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +99,7 @@ public class SignUpUserService {
 
         PasswordData passwordData = new PasswordData(req.getUsername(),req.getPassword());
         LOGGER.info("Checking if the password meets the password policy");
-        RuleResult result = passwordFormatValidationService.validatePassword(passwordData);
+        ValidationResult result = passwordFormatValidationService.validatePassword(passwordData);
 
         if(!result.isValid()){
             throw KycRestException.builderRestException()
