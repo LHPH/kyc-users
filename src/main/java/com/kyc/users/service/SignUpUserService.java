@@ -88,7 +88,7 @@ public class SignUpUserService {
             }
         }
         throw KycRestException.builderRestException()
-                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .errorData(kycMessages.getMessage(MSG_APP_005))
                 .inputData(req)
                 .build();

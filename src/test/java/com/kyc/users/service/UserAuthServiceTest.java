@@ -125,7 +125,7 @@ public class UserAuthServiceTest {
         when(sessionService.hasActiveSessionOnChannel(anyLong(),anyInt()))
                 .thenReturn(false);
         when(kycCustomerRepository.findByIdUser(anyLong()))
-                .thenReturn(new KycCustomer());
+                .thenReturn(createCustomer());
         when(tokenService.getToken(any(JwtData.class)))
                 .thenReturn("token");
 
@@ -155,7 +155,7 @@ public class UserAuthServiceTest {
         when(sessionService.hasActiveSessionOnChannel(anyLong(),anyInt()))
                 .thenReturn(false);
         when(kycExecutiveRepository.findByIdUser(anyLong()))
-                .thenReturn(new KycExecutive());
+                .thenReturn(createExecutive());
         when(tokenService.getToken(any(JwtData.class)))
                 .thenReturn("token");
 
@@ -309,7 +309,7 @@ public class UserAuthServiceTest {
 
             service.signInUser(req);
         });
-        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY,ex.getStatus());
+        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_CONTENT,ex.getStatus());
     }
 
     @Test
@@ -385,5 +385,23 @@ public class UserAuthServiceTest {
 
         ResponseData<JwtData> response = service.renewSession(req);
         Assertions.assertEquals(HttpStatus.FORBIDDEN,response.getHttpStatus());
+    }
+
+    private KycCustomer createCustomer(){
+        KycCustomer customer = new KycCustomer();
+        customer.setId(1L);
+        customer.setFirstName("TEST");
+        customer.setLastName("TEST");
+        customer.setRfc("TEST");
+
+        return customer;
+    }
+
+    private KycExecutive createExecutive(){
+        KycExecutive executive = new KycExecutive();
+        executive.setId(1L);
+        executive.setFirstName("TEST");
+        executive.setLastName("TEST");
+        return executive;
     }
 }

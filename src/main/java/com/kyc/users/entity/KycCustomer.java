@@ -18,6 +18,12 @@ public class KycCustomer implements Serializable {
     @Id
     private Long id;
 
+    @Column(name = "FIRST_NAME")
+    private String firstName;
+
+    @Column(name = "LAST_NAME")
+    private String lastName;
+
     @Column(name = "RFC")
     private String rfc;
 

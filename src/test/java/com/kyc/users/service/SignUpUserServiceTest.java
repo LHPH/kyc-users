@@ -133,7 +133,7 @@ public class SignUpUserServiceTest {
 
             service.signUpUser(req);
         });
-        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY,ex.getStatus());
+        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_CONTENT,ex.getStatus());
     }
 
     @Test
@@ -183,7 +183,7 @@ public class SignUpUserServiceTest {
 
             service.signUpUser(req);
         });
-        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY,ex.getStatus());
+        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_CONTENT,ex.getStatus());
     }
 
     @Test

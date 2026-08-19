@@ -9,11 +9,14 @@ import com.kyc.core.persistence.entity.KycParameter;
 import com.kyc.core.properties.KycMessages;
 import com.kyc.core.services.PasswordEncoderService;
 import com.kyc.users.aspects.DatabaseHandlingException;
+import com.kyc.users.entity.KycCustomer;
+import com.kyc.users.entity.KycExecutive;
 import com.kyc.users.entity.KycLoginUserInfo;
 import com.kyc.users.entity.KycUserExtend;
 import com.kyc.users.enums.KycUserTypeEnum;
 import com.kyc.users.model.CredentialData;
 import com.kyc.users.model.SessionData;
+import com.kyc.users.model.UserIdentificationData;
 import com.kyc.users.repositories.KycCustomerRepository;
 import com.kyc.users.repositories.KycExecutiveRepository;
 import com.kyc.users.repositories.KycUserExtendRepository;
@@ -130,7 +133,7 @@ public class UserAuthService {
                 checkNoCurrentSessionOnChannel(user,idChannel);
 
                 LOGGER.info("Retrieve User Info");
-                Long id = getExecutiveOrCustomerId(user);
+                UserIdentificationData userIdentificationData = getExecutiveOrCustomerId(user);
 
                 LOGGER.info("The user pass all the validations, generating session");
                 sessionService.openSession(sessionData);
@@ -141,8 +144,9 @@ public class UserAuthService {
                         .user(user.getId())
                         .role(KycUserTypeEnum.getInstanceById(user.getUserType().getId()).name())
                         .channel(String.valueOf(idChannel))
-                        .owner(id)
-                        .sub(sessionData.getSessionId())
+                        .owner(userIdentificationData.getId())
+                        .sid(sessionData.getSessionId())
+                        .sub(userIdentificationData.getName())
                         .additions(Map.of("sess-init",sessionData.getNewDate().getTime()))
                         .build();
 
@@ -170,7 +174,7 @@ public class UserAuthService {
 
         LOGGER.info("Reading and validating access token");
         JwtData data = tokenService.readToken(token);
-        String key = data.getSub();
+        String key = data.getSid();
 
         LOGGER.info("Retrieving session id from the token");
         SessionData sessionData = SessionData.builder()
@@ -194,7 +198,7 @@ public class UserAuthService {
 
         LOGGER.info("Reading and validating access token");
         JwtData data = tokenService.readToken(token);
-        String key = data.getSub();
+        String key = data.getSid();
 
         LOGGER.info("Retrieving session id");
         SessionData sessionData = SessionData.builder()
@@ -323,20 +327,26 @@ public class UserAuthService {
         if(hasSession){
 
             throw KycRestException.builderRestException()
-                    .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .status(HttpStatus.UNPROCESSABLE_CONTENT)
                     .errorData(kycMessages.getMessage(MSG_APP_009))
                     .inputData(user.getId())
                     .build();
         }
     }
 
-    private Long getExecutiveOrCustomerId(KycUserExtend user){
+    private UserIdentificationData getExecutiveOrCustomerId(KycUserExtend user){
 
         KycUserTypeEnum type = KycUserTypeEnum.getInstanceById(user.getUserType().getId());
 
         if(KycUserTypeEnum.CUSTOMER.equals(type)){
-            return kycCustomerRepository.findByIdUser(user.getId()).getId();
+
+            KycCustomer kycCustomer = kycCustomerRepository.findByIdUser(user.getId());
+            String name = kycCustomer.getFirstName()+ " "+kycCustomer.getLastName();
+            return new UserIdentificationData(kycCustomer.getId(),name);
         }
-        return kycExecutiveRepository.findByIdUser(user.getId()).getId();
+
+        KycExecutive kycExecutive = kycExecutiveRepository.findByIdUser(user.getId());
+        String name = kycExecutive.getFirstName()+ " "+kycExecutive.getLastName();
+        return new UserIdentificationData(kycExecutive.getId(),name);
     }
 }
